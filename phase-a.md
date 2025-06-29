@@ -1,0 +1,126 @@
+# Kalibran - Phase A Development Plan
+
+This document outlines the detailed logical steps to execute on the Product Requirements Document (PRD) for Kalibran - Phase A.
+
+### Core Architectural Principles
+- **Single Docker Container:** The entire application (frontend and backend) will be served from a single Docker container to keep the architecture lean. The backend will serve the compiled frontend assets.
+- **Monorepo Structure:** Both frontend and backend code will live in the same repository for simplified management.
+- **Database-First:** The database schema will be the foundation, defined and created early in the process.
+
+---
+
+### Step 1: Project Initialization and Setup
+
+1.  **Directory Structure:** Create the initial project structure.
+    ```
+    /Kalibran
+    |-- /src
+    |   |-- /backend
+    |   |   |-- /controllers
+    |   |   |-- /routes
+    |   |   |-- /services
+    |   |   |-- /models
+    |   |   |-- index.ts
+    |   |-- /frontend
+    |       |-- /src
+    |       |-- package.json
+    |-- /database
+    |   |-- init.sql
+    |-- Dockerfile
+    |-- package.json
+    |-- tsconfig.json
+    ```
+2.  **Initialize Project:** Run `npm init` at the root.
+3.  **Install Dependencies:**
+    -   **Backend (in `/`):** `npm install express typescript ts-node pg mssql socket.io bcrypt` and dev dependencies `@types/express @types/node @types/pg @types/bcrypt`.
+    -   **Frontend (in `/src/frontend`):** Use `npx create-react-app frontend --template typescript` to bootstrap the React app.
+4.  **TypeScript Configuration:** Create a root `tsconfig.json` to manage compilation for the backend.
+
+---
+
+### Step 2: Database Schema and Setup
+
+1.  **Create `init.sql`:** In `database/init.sql`, write the SQL statements to create the necessary tables.
+    -   **`settings`**: To store global settings like the admin PIN and sync configurations.
+        -   `setting_key` (PK), `setting_value`
+    -   **`users`**: A simple table for user roles, initially just for the admin.
+        -   `id` (PK), `username`, `pin_hash`
+    -   **`boards`**: To define Kanban boards.
+        -   `id` (PK), `name`
+    -   **`columns`**: To define the columns for each board.
+        -   `id` (PK), `board_id` (FK), `name`, `column_order`, `filter_rules` (JSONB)
+    -   **`raw_sync_data`**: A single table to store the joined and filtered data from ProCal. The columns will be dynamic based on the user's query setup, but will include `Inst_ID` and `Job_no`.
+    -   **`column_transitions`**: To track card movement and time-in-column.
+        -   `id` (PK), `job_no` (FK), `inst_id`, `column_id` (FK), `entered_at`, `exited_at`, `sequence_number`, `is_outlier` (boolean)
+
+---
+
+### Step 3: Backend Development - Core Services
+
+1.  **Setup Express Server (`src/backend/index.ts`):**
+    -   Create a basic Express server.
+    -   Implement middleware for JSON parsing and CORS.
+    -   Add a check to see if the application has been set up (e.g., if an admin PIN exists in the `settings` table). If not, redirect to a setup page.
+2.  **First-Time Setup & Authentication:**
+    -   Create a route and controller for the initial setup process. This will render a page where the user sets the 4-digit admin PIN.
+    -   Hash the PIN using `bcrypt` before storing it.
+    -   Create authentication middleware to protect admin-only routes. It will check for a valid session/token that is granted after a successful PIN entry.
+3.  **Database Connection Service:**
+    -   Create a service to manage the connection pool to the PostgreSQL database.
+4.  **Sync Service:**
+    -   Create a service to handle the connection to the external SQL Server (ProCal).
+    -   Implement the logic to execute the user-defined `JOIN` query. This must join "Calibrations" and "Instruments" on `Inst_ID` and select the row with the highest `Job_no` for each instrument.
+    -   The results will be stored in the `raw_sync_data` table.
+    -   Create an API endpoint to trigger a manual sync.
+
+---
+
+### Step 4: Backend Development - API Endpoints
+
+1.  **Boards API:**
+    -   `GET /api/boards`: List all boards.
+    -   `POST /api/boards`: Create a new board (admin only).
+    -   `GET /api/boards/:id`: Get details for a single board, including its columns and cards.
+2.  **Columns API:**
+    -   `POST /api/columns`: Add a column to a board (admin only).
+    -   `PUT /api/columns/:id`: Update a column's name, order, or filter rules (admin only).
+    -   The filter rules will be translated into a SQL `WHERE` clause with `AND`, `OR`, and `IS NOT` capabilities to query the `raw_sync_data` table.
+3.  **Cards API (Card Movement):**
+    -   `PUT /api/cards/:job_no/move`: The primary endpoint for lab techs. It will take a `new_column_id`.
+    -   **Logic:**
+        1.  Find the last entry for the card in `column_transitions` and set `exited_at`.
+        2.  Create a new entry in `column_transitions` with the `new_column_id`, a new `entered_at` timestamp, and the correct `sequence_number`.
+4.  **WebSocket Foundation:**
+    -   Integrate Socket.io with the Express server.
+    -   Set up the basic connection handling, but do not implement the real-time data push in Phase A. This prepares the foundation for Phase B.
+
+---
+
+### Step 5: Frontend Development
+
+1.  **Routing:** Use `react-router-dom` to set up routes for:
+    -   `/setup`: The initial admin PIN setup page.
+    -   `/login`: The PIN entry page for accessing admin features.
+    -   `/board/:boardName`: The main Kanban board view.
+2.  **Kanban Board UI:**
+    -   Create a `Board` component that fetches data from `/api/boards/:id`.
+    -   Render `Column` components dynamically based on the fetched data.
+    -   Render `Card` components within the appropriate columns.
+    -   Implement drag-and-drop functionality for cards between columns using a library like `react-beautiful-dnd`. Dropping a card will call the `PUT /api/cards/:job_no/move` endpoint.
+3.  **Settings UI (Admin Only):**
+    -   Create UI for managing boards and columns.
+    -   Build the interface for configuring column filters, allowing the user to define rules with "AND", "OR", and "IS NOT" logic.
+    -   Create the card layout editor.
+4.  **State Management:** Use a state management library (like Zustand or Redux Toolkit) to handle the board state and user authentication status.
+
+---
+
+### Step 6: Dockerization
+
+1.  **Create `Dockerfile`:**
+    -   Use a multi-stage build.
+    -   **Stage 1 (Frontend Build):** Use a `node` image, copy the `frontend` source, install dependencies, and run the build script to generate static assets.
+    -   **Stage 2 (Backend Build):** Use a `node` image, copy the `backend` source, install dependencies, and compile the TypeScript to JavaScript.
+    -   **Stage 3 (Final Image):** Use a lean `node` image (e.g., `node:18-alpine`). Copy the compiled backend from Stage 2 and the static frontend assets from Stage 1.
+    -   The `CMD` will be `["node", "src/backend/index.js"]`.
+    -   The Express server will be configured to serve the static files from the frontend build directory.
