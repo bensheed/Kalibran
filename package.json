@@ -1,0 +1,31 @@
+{
+  "name": "kalibran",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bensheed/Kalibran/issues"
+  },
+  "homepage": "https://github.com/bensheed/Kalibran#readme",
+  "description": "",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "express": "^5.1.0",
+    "mssql": "^11.0.1",
+    "pg": "^8.16.3",
+    "socket.io": "^4.8.1",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
+    "@types/express": "^5.0.3",
+    "@types/node": "^24.0.7",
+    "@types/pg": "^8.15.4"
+  }
+}
