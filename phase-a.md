@@ -41,17 +41,20 @@ This document outlines the detailed logical steps to execute on the Product Requ
 ### Step 2: Database Schema and Setup
 
 1.  **Create `init.sql`:** In `database/init.sql`, write the SQL statements to create the necessary tables.
-    -   **`settings`**: To store global settings like the admin PIN and sync configurations.
-        -   `setting_key` (PK), `setting_value`
-    -   **`users`**: A simple table for user roles, initially just for the admin.
-        -   `id` (PK), `username`, `pin_hash`
+    -   **`settings`**: To store global settings.
+        -   `setting_key` (PK), `setting_value` (to store admin PIN, sync frequency, outlier thresholds, inactivity timeout for auto-scrolling).
+    -   **`users`**: A simple table for user roles, laying the foundation for future multi-user support.
+        -   `id` (PK), `username`, `pin_hash`, `role` ('admin' or 'tech').
     -   **`boards`**: To define Kanban boards.
-        -   `id` (PK), `name`
+        -   `id` (PK), `name`, `card_layout_config` (JSONB to store which columns from `raw_sync_data` are visible on cards).
     -   **`columns`**: To define the columns for each board.
-        -   `id` (PK), `board_id` (FK), `name`, `column_order`, `filter_rules` (JSONB)
+        -   `id` (PK), `board_id` (FK), `name`, `column_order`, `filter_rules` (JSONB).
     -   **`raw_sync_data`**: A single table to store the joined and filtered data from ProCal. The columns will be dynamic based on the user's query setup, but will include `Inst_ID` and `Job_no`.
+    -   **`kanban_cards_view`**: Create a PostgreSQL VIEW on `raw_sync_data` to act as a clean, performant data source for the frontend, decoupling it from the raw storage table.
     -   **`column_transitions`**: To track card movement and time-in-column.
-        -   `id` (PK), `job_no` (FK), `inst_id`, `column_id` (FK), `entered_at`, `exited_at`, `sequence_number`, `is_outlier` (boolean)
+        -   `id` (PK), `job_no` (FK), `inst_id`, `column_id` (FK), `entered_at`, `exited_at`, `sequence_number`, `is_outlier` (boolean).
+    -   **`prediction_models`**: To store serialized machine learning models and their metadata. This will be created in Phase A to lay the foundation for forecasting features in Phase B.
+        -   `id` (PK), `tenant_id` (FK), `model_name`, `model_data` (BYTEA), `created_at`.
 
 ---
 
@@ -80,7 +83,8 @@ This document outlines the detailed logical steps to execute on the Product Requ
 1.  **Boards API:**
     -   `GET /api/boards`: List all boards.
     -   `POST /api/boards`: Create a new board (admin only).
-    -   `GET /api/boards/:id`: Get details for a single board, including its columns and cards.
+    -   `GET /api/boards/:id`: Get details for a single board, including its columns and cards (using the `kanban_cards_view`).
+    -   `PUT /api/boards/:id`: Update board settings, including the `card_layout_config`.
 2.  **Columns API:**
     -   `POST /api/columns`: Add a column to a board (admin only).
     -   `PUT /api/columns/:id`: Update a column's name, order, or filter rules (admin only).
@@ -90,7 +94,10 @@ This document outlines the detailed logical steps to execute on the Product Requ
     -   **Logic:**
         1.  Find the last entry for the card in `column_transitions` and set `exited_at`.
         2.  Create a new entry in `column_transitions` with the `new_column_id`, a new `entered_at` timestamp, and the correct `sequence_number`.
-4.  **WebSocket Foundation:**
+4.  **Settings API:**
+    -   `GET /api/settings`: Retrieve all global settings.
+    -   `PUT /api/settings`: Update global settings (admin only).
+5.  **WebSocket Foundation:**
     -   Integrate Socket.io with the Express server.
     -   Set up the basic connection handling, but do not implement the real-time data push in Phase A. This prepares the foundation for Phase B.
 
@@ -107,19 +114,24 @@ This document outlines the detailed logical steps to execute on the Product Requ
 3.  **Kanban Board UI:**
     -   Create a `Board` component that fetches data from `/api/boards/:id`.
     -   Render `Column` components dynamically based on the fetched data.
-    -   Render `Card` components within the appropriate columns.
+    -   Render `Card` components within the appropriate columns, with fields dynamically displayed based on the board's `card_layout_config`.
     -   Implement drag-and-drop functionality for cards between columns using a library like `react-beautiful-dnd`. Dropping a card will call the `PUT /api/cards/:job_no/move` endpoint.
+    -   **Remember Last Board:** Use `localStorage` to store the ID of the last viewed board and automatically navigate to it on subsequent visits.
     -   **Interface Scaling:**
         -   Implement controls on the board UI for lab techs to manually adjust the scale of the board and cards.
         -   The board should dynamically scale as the number of cards and columns change.
     -   **Column Features:**
         -   Each column must be individually scrollable.
         -   Implement a sort feature for each column.
-        -   After a configurable period of inactivity, columns will automatically scroll back to the top.
+        -   After a configurable period of inactivity (fetched from `GET /api/settings`), columns will automatically scroll back to the top.
 4.  **Settings UI (Admin Only):**
     -   Create UI for managing boards and columns.
     -   Build the interface for configuring column filters, allowing the user to define rules with "AND", "OR", and "IS NOT" logic.
-    -   Create the card layout editor.
+    -   **Card Layout Editor:**
+        -   Create a UI where admins can see a list of available fields from the synced data and use checkboxes or a drag-and-drop interface to select and order them for display on the Kanban cards. This configuration will be saved via the `PUT /api/boards/:id` endpoint.
+    -   **Global Settings:**
+        -   Develop a form to update values for sync frequency, inactivity timeout, and outlier detection thresholds.
+        -   Include a tooltip next to the outlier setting to explain its purpose as required by the PRD.
 5.  **State Management:** Use a state management library (like Zustand or Redux Toolkit) to handle the board state and user authentication status.
 6.  **Error Handling:**
     -   When the external SQL Server is unreachable, display a clear error message on the screen.
