@@ -102,16 +102,34 @@ This document outlines the detailed logical steps to execute on the Product Requ
     -   `/setup`: The initial admin PIN setup page.
     -   `/login`: The PIN entry page for accessing admin features.
     -   `/board/:boardName`: The main Kanban board view.
-2.  **Kanban Board UI:**
+2.  **First-Time Setup UI:**
+    -   The setup page must include a dropdown for selecting the external database, with "MetCal" and "IndySoft" greyed out.
+3.  **Kanban Board UI:**
     -   Create a `Board` component that fetches data from `/api/boards/:id`.
     -   Render `Column` components dynamically based on the fetched data.
     -   Render `Card` components within the appropriate columns.
     -   Implement drag-and-drop functionality for cards between columns using a library like `react-beautiful-dnd`. Dropping a card will call the `PUT /api/cards/:job_no/move` endpoint.
-3.  **Settings UI (Admin Only):**
+    -   **Interface Scaling:**
+        -   Implement controls on the board UI for lab techs to manually adjust the scale of the board and cards.
+        -   The board should dynamically scale as the number of cards and columns change.
+    -   **Column Features:**
+        -   Each column must be individually scrollable.
+        -   Implement a sort feature for each column.
+        -   After a configurable period of inactivity, columns will automatically scroll back to the top.
+4.  **Settings UI (Admin Only):**
     -   Create UI for managing boards and columns.
     -   Build the interface for configuring column filters, allowing the user to define rules with "AND", "OR", and "IS NOT" logic.
     -   Create the card layout editor.
-4.  **State Management:** Use a state management library (like Zustand or Redux Toolkit) to handle the board state and user authentication status.
+5.  **State Management:** Use a state management library (like Zustand or Redux Toolkit) to handle the board state and user authentication status.
+6.  **Error Handling:**
+    -   When the external SQL Server is unreachable, display a clear error message on the screen.
+    -   The error message should include a button that navigates the user to the settings page.
+7.  **Styling:**
+    -   Implement the specified color scheme:
+        -   **Primary:** `#d5d7d9` (off-white)
+        -   **Dark Grey:** `#2e3941`
+        -   **Medium Grey:** `#586167`
+        -   **Blue:** `#314C9F`
 
 ---
 
