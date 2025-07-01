@@ -8,6 +8,7 @@ Kalibran is a tool that reads data from calibration/asset management software an
 
 - Docker
 - Docker Compose
+- Git
 
 ### Running the Application
 
@@ -17,16 +18,22 @@ Kalibran is a tool that reads data from calibration/asset management software an
    cd Kalibran
    ```
 
-2. **Build and run the application with Docker Compose:**
-   ```bash
-   docker-compose up --build
-   ```
+2. **Run the application:**
+   - **On Windows:** Double-click the `launcher.bat` file.
+   - **On macOS/Linux:** Open a terminal and run the following command:
+     ```bash
+     sh launcher.bat
+     ```
 
 3. **Access the application:**
    Open your web browser and navigate to `http://localhost:3001`.
 
 4. **First-Time Setup:**
    On your first visit, you will be redirected to the setup page to configure the admin PIN and connect to your external database (e.g., ProCal).
+
+## Updating the Application
+
+To update the application to the latest version, simply run the `launcher.bat` file again. This will pull the latest changes from GitHub and rebuild the application containers without affecting your database.
 
 ## Tech Stack
 
