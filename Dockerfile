@@ -10,10 +10,11 @@ RUN npm run build
 FROM node:20-alpine AS backend-builder
 WORKDIR /app
 COPY package.json ./
+COPY tsconfig.json ./
 RUN npm install
 RUN npm install -g typescript
 COPY src/backend/ .
-RUN tsc -p tsconfig.json
+RUN tsc
 
 # Stage 3: Final image
 FROM node:20-alpine
