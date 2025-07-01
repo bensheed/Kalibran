@@ -33,7 +33,7 @@ Kalibran is a tool that reads data from calibration/asset management software an
 
 ## Updating the Application
 
-To update the application to the latest version, simply run the `launcher.bat` file again. This will pull the latest changes from GitHub and rebuild the application containers without affecting your database.
+To update the application to the latest version, first pull the latest changes from GitHub, and then run the `launcher.bat` file. This will rebuild the application containers without affecting your database.
 
 ## Tech Stack
 
