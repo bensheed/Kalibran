@@ -1,40 +1,52 @@
 import { Request, Response } from 'express';
 import pool from '../services/database.service';
+import bcrypt from 'bcrypt';
 
-const saltRounds = 10;
+export const setup = async (req: Request, res: Response) => {
+    const { adminPin, externalDb } = req.body;
 
-export const setupAdminPin = async (req: Request, res: Response) => {
-    const { pin } = req.body;
-
-    if (!pin || typeof pin !== 'string' || !/^\d{4}$/.test(pin)) {
-        return res.status(400).json({ message: 'A 4-digit PIN is required.' });
+    // Basic validation
+    if (!adminPin || typeof adminPin !== 'string' || !/^\d{4}$/.test(adminPin) || !externalDb) {
+        return res.status(400).json({ message: 'Invalid setup data. A 4-digit PIN and external DB config are required.' });
     }
 
     try {
-        // Check if a PIN already exists
+        // Check if setup has already been completed
         const existingPin = await pool.query("SELECT setting_value FROM settings WHERE setting_key = 'admin_pin'");
         if (existingPin.rows.length > 0 && existingPin.rows[0].setting_value) {
-            return res.status(409).json({ message: 'Admin PIN has already been set.' });
+            return res.status(409).json({ message: 'Application has already been configured.' });
         }
 
-        const hashedPin = await bcrypt.hash(pin, saltRounds);
+        const client = await pool.connect();
+        try {
+            await client.query('BEGIN');
 
-        // Using INSERT with ON CONFLICT to handle potential race conditions
-        const query = {
-            text: `
-                INSERT INTO settings (setting_key, setting_value) 
-                VALUES ('admin_pin', $1) 
-                ON CONFLICT (setting_key) 
-                DO UPDATE SET setting_value = $1;
-            `,
-            values: [hashedPin],
-        };
+            // Hash the admin PIN
+            const salt = await bcrypt.genSalt(10);
+            const hashedPin = await bcrypt.hash(adminPin, salt);
 
-        await pool.query(query);
+            // Save the hashed PIN
+            await client.query(
+                "INSERT INTO settings (setting_key, setting_value) VALUES ('admin_pin', $1) ON CONFLICT (setting_key) DO UPDATE SET setting_value = $1",
+                [hashedPin]
+            );
 
-        res.status(201).json({ message: 'Admin PIN has been set successfully.' });
+            // Save external DB config (should be encrypted in a real app)
+            await client.query(
+                "INSERT INTO settings (setting_key, setting_value) VALUES ('external_db_config', $1) ON CONFLICT (setting_key) DO UPDATE SET setting_value = $1",
+                [JSON.stringify(externalDb)]
+            );
+
+            await client.query('COMMIT');
+            res.status(201).json({ message: 'Setup completed successfully.' });
+        } catch (error) {
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            client.release();
+        }
     } catch (error) {
-        console.error('Error setting admin PIN:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        console.error('Setup failed:', error);
+        res.status(500).json({ message: 'Internal server error during setup.' });
     }
 };

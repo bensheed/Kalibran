@@ -154,3 +154,24 @@ This document outlines the detailed logical steps to execute on the Product Requ
     -   **Stage 3 (Final Image):** Use a lean `node` image (e.g., `node:18-alpine`). Copy the compiled backend from Stage 2 and the static frontend assets from Stage 1.
     -   The `CMD` will be `["node", "src/backend/index.js"]`.
     -   The Express server will be configured to serve the static files from the frontend build directory.
+
+---
+
+### Step 7: First-Time Setup Flow
+
+1.  **Backend Logic:**
+    -   The backend will check for the existence of an `admin_pin` in the `settings` table on startup.
+    -   If the PIN is not found, a `setupRequired: true` flag will be sent with API responses.
+2.  **Frontend Logic:**
+    -   The frontend will check for the `setupRequired` flag in API responses.
+    -   If the flag is true, the user will be redirected to the `/setup` page.
+3.  **Setup Page:**
+    -   A new `Setup.tsx` component will be created.
+    -   This page will contain a form to:
+        -   Set the 4-digit admin PIN.
+        -   Select the external database type (ProCal, MetCal, IndySoft).
+        -   Enter the connection details for the external database (host, port, user, password, database name).
+    -   Submitting the form will send the data to the `/api/setup` endpoint.
+4.  **README.md:**
+    -   The `README.md` file will be updated with instructions on how to run the application using `docker-compose`.
+

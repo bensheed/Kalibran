@@ -1,9 +1,8 @@
 import { Router } from 'express';
-import { setupAdminPin } from '../controllers/setup.controller';
+import { setup } from '../controllers/setup.controller';
 
 const router = Router();
 
-// Route to set the admin PIN during the first-time setup
-router.post('/setup/admin-pin', setupAdminPin);
+router.post('/setup', setup);
 
 export default router;
