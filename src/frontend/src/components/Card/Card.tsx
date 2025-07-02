@@ -17,7 +17,7 @@ const Card: React.FC<CardProps> = ({ card }) => {
 
     return (
         <div
-            ref={drag}
+            ref={drag as unknown as React.Ref<HTMLDivElement>}
             style={{
                 border: '1px solid gray',
                 padding: '5px',
