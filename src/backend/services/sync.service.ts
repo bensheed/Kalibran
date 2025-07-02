@@ -18,10 +18,10 @@ const sqlConfig = {
  * and syncs the latest job for each instrument into the local PostgreSQL database.
  */
 export const syncProCalData = async () => {
+    let pool: mssql.ConnectionPool | null = null;
     try {
-        await mssql.connect(sqlConfig);
-
-        const result = await mssql.query`
+        pool = await mssql.connect(sqlConfig);
+        const result = await pool.request().query`
             WITH LatestCalibrations AS (
                 SELECT 
                     i.*, 
@@ -75,6 +75,8 @@ export const syncProCalData = async () => {
         console.error('Error during ProCal data sync:', err);
         throw new Error('Failed to sync data from ProCal.');
     } finally {
-        await mssql.close();
+        if (pool) {
+            await pool.close();
+        }
     }
 };

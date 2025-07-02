@@ -67,8 +67,8 @@ const checkSetup = async (req: express.Request, res: express.Response, next: exp
     }
 };
 
-// Apply the setup check to all routes
-app.use(checkSetup);
+// Apply the setup check to all API routes
+app.use('/api', checkSetup);
 
 // Routes
 app.use('/api', setupRoutes);
@@ -77,7 +77,7 @@ app.use('/api', boardRoutes);
 app.use('/api', columnRoutes);
 app.use('/api', cardRoutes);
 app.use('/api', settingsRoutes);
-app.post('/api/login', authenticate);
+app.use('/api/login', authenticate);
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.

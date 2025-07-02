@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
+import bcrypt from 'bcrypt';
 import pool from '../services/database.service';
 
 // A simple session store (in-memory, not for production)
