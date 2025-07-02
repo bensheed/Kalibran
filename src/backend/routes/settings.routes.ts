@@ -4,7 +4,7 @@ import { isAdmin } from '../middleware/auth.middleware';
 
 const router = Router();
 
-router.get('/api/settings', getAllSettings as RequestHandler);
-router.put('/api/settings', isAdmin as RequestHandler, updateSettings as RequestHandler);
+router.get('/settings', getAllSettings as RequestHandler);
+router.put('/settings', isAdmin as RequestHandler, updateSettings as RequestHandler);
 
 export default router;

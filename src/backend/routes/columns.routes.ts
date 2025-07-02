@@ -4,7 +4,7 @@ import { isAdmin } from '../middleware/auth.middleware';
 
 const router = Router();
 
-router.post('/api/columns', isAdmin as RequestHandler, addColumn as RequestHandler);
-router.put('/api/columns/:id', isAdmin as RequestHandler, updateColumn as RequestHandler);
+router.post('/columns', isAdmin as RequestHandler, addColumn as RequestHandler);
+router.put('/columns/:id', isAdmin as RequestHandler, updateColumn as RequestHandler);
 
 export default router;
