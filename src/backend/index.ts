@@ -71,12 +71,12 @@ const checkSetup = async (req: express.Request, res: express.Response, next: exp
 app.use('/api', checkSetup as express.RequestHandler);
 
 // Routes
-app.use('/api', setupRoutes);
-app.use('/api', syncRoutes);
-app.use('/api', boardRoutes);
-app.use('/api', columnRoutes);
-app.use('/api', cardRoutes);
-app.use('/api', settingsRoutes);
+app.use(setupRoutes);
+app.use(syncRoutes);
+app.use(boardRoutes);
+app.use(columnRoutes);
+app.use(cardRoutes);
+app.use(settingsRoutes);
 app.post('/api/login', authenticate as express.RequestHandler);
 
 // The "catchall" handler: for any request that doesn't

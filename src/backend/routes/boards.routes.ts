@@ -9,9 +9,9 @@ import { isAdmin } from '../middleware/auth.middleware';
 
 const router = Router();
 
-router.get('/boards', getAllBoards as RequestHandler);
-router.post('/boards', isAdmin as RequestHandler, createBoard as RequestHandler);
-router.get('/boards/:id', getBoardById as RequestHandler);
-router.put('/boards/:id', isAdmin as RequestHandler, updateBoard as RequestHandler);
+router.get('/api/boards', getAllBoards as RequestHandler);
+router.post('/api/boards', isAdmin as RequestHandler, createBoard as RequestHandler);
+router.get('/api/boards/:id', getBoardById as RequestHandler);
+router.put('/api/boards/:id', isAdmin as RequestHandler, updateBoard as RequestHandler);
 
 export default router;
