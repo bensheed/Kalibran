@@ -77,7 +77,7 @@ app.use('/api/boards', boardRoutes);
 app.use('/api/columns', columnRoutes);
 app.use('/api/cards', cardRoutes);
 app.use('/api/settings', settingsRoutes);
-app.post('/api/login', authenticate);
+app.post('/api/login', authenticate as express.RequestHandler);
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
