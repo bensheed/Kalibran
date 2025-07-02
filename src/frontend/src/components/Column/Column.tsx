@@ -62,7 +62,7 @@ const Column: React.FC<ColumnProps> = ({ column, cards }) => {
         <div ref={columnRef} style={{ border: '1px solid black', padding: '10px', margin: '10px', minHeight: '200px', height: '500px', overflowY: 'auto' }}>
             <h2>{column.name}</h2>
             <button onClick={sortCards}>Sort by Job No</button>
-            <div ref={drop} style={{ minHeight: '200px' }}>
+            <div ref={drop as unknown as React.Ref<HTMLDivElement>} style={{ minHeight: '200px' }}>
                 {sortedCards.map((card) => (
                     <Card key={card.job_no} card={card} />
                 ))}
