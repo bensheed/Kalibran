@@ -34,6 +34,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
             res.status(401).json({ message: 'Invalid credentials.' });
         }
     } catch (error) {
+        console.error('Error during authentication:', error);
         next(error);
     }
 };
