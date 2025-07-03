@@ -47,6 +47,7 @@ export const setup = async (req: Request, res: Response) => {
         }
     } catch (error) {
         console.error('Setup failed:', error);
-        res.status(500).json({ message: 'Internal server error during setup.' });
+        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
+        res.status(500).json({ message: `Internal server error during setup: ${errorMessage}` });
     }
 };

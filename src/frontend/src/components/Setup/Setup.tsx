@@ -36,8 +36,12 @@ const Setup: React.FC = () => {
             });
             alert('Setup complete! You can now log in.');
             navigate('/login');
-        } catch (err) {
-            setError('Setup failed. Please check your details and try again.');
+        } catch (err: any) {
+            if (err.response && err.response.data && err.response.data.message) {
+                setError(err.response.data.message);
+            } else {
+                setError('An unexpected error occurred. Please try again.');
+            }
         }
     };
 
