@@ -35,7 +35,7 @@ app.use(cors());
 app.use(express.json());
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../../frontend/build')));
+app.use(express.static(path.join(__dirname, '../frontend/build')));
 
 // Setup check middleware
 const checkSetup = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -67,8 +67,8 @@ const checkSetup = async (req: express.Request, res: express.Response, next: exp
     }
 };
 
-// Apply the setup check to all routes
-app.use(checkSetup);
+// Apply the setup check to all API routes
+app.use('/api', checkSetup as express.RequestHandler);
 
 // Routes
 app.use('/api', setupRoutes);
@@ -77,12 +77,14 @@ app.use('/api', boardRoutes);
 app.use('/api', columnRoutes);
 app.use('/api', cardRoutes);
 app.use('/api', settingsRoutes);
-app.post('/api/login', authenticate);
+app.post('/api/login', (req, res, next) => {
+    authenticate(req, res, next);
+});
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname+'../../../frontend/build/index.html'));
+  res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
 });
 
 server.listen(port, () => {

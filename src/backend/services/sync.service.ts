@@ -18,10 +18,10 @@ const sqlConfig = {
  * and syncs the latest job for each instrument into the local PostgreSQL database.
  */
 export const syncProCalData = async () => {
+    let mssqlPool: mssql.ConnectionPool | null = null;
     try {
-        await mssql.connect(sqlConfig);
-
-        const result = await mssql.query`
+        mssqlPool = await mssql.connect(sqlConfig);
+        const result = await mssqlPool.request().query`
             WITH LatestCalibrations AS (
                 SELECT 
                     i.*, 
@@ -44,7 +44,7 @@ export const syncProCalData = async () => {
             return;
         }
 
-        // Start a transaction
+        // Start a transaction with the PostgreSQL pool
         const client = await pool.connect();
         try {
             await client.query('BEGIN');
@@ -56,7 +56,7 @@ export const syncProCalData = async () => {
             for (const row of proCalData) {
                 const { Inst_ID, Job_no, ...rest } = row;
                 const query = {
-                    text: 'INSERT INTO raw_sync_data(Inst_ID, Job_no, data) VALUES($1, $2, $3)',
+                    text: 'INSERT INTO raw_sync_data(inst_id, job_no, data) VALUES($1, $2, $3)',
                     values: [Inst_ID, Job_no, rest],
                 };
                 await client.query(query);
@@ -75,6 +75,8 @@ export const syncProCalData = async () => {
         console.error('Error during ProCal data sync:', err);
         throw new Error('Failed to sync data from ProCal.');
     } finally {
-        await mssql.close();
+        if (mssqlPool) {
+            await mssqlPool.close();
+        }
     }
 };

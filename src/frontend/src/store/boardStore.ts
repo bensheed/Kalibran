@@ -1,4 +1,4 @@
-import create from 'zustand';
+import { create } from 'zustand';
 import api from '../services/api';
 import { Board } from '../models/Board';
 import { Column } from '../models/Column';

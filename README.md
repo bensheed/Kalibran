@@ -31,10 +31,6 @@ Kalibran is a tool that reads data from calibration/asset management software an
 4. **First-Time Setup:**
    On your first visit, you will be redirected to the setup page to configure the admin PIN and connect to your external database (e.g., ProCal).
 
-## Updating the Application
-
-To update the application to the latest version, simply run the `launcher.bat` file again. This will pull the latest changes from GitHub and rebuild the application containers without affecting your database.
-
 ## Tech Stack
 
 - **Frontend:** React, TypeScript

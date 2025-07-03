@@ -1,10 +1,11 @@
 import { Request, Response, NextFunction } from 'express';
+import bcrypt from 'bcrypt';
 import pool from '../services/database.service';
 
 // A simple session store (in-memory, not for production)
 const activeSessions: { [sessionId: string]: { userId: number; role: string } } = {};
 
-export const authenticate = async (req: Request, res: Response) => {
+export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
     const { pin } = req.body;
 
     if (!pin) {
@@ -25,7 +26,7 @@ export const authenticate = async (req: Request, res: Response) => {
             const sessionId = `sess_${Date.now()}_${Math.random()}`;
             activeSessions[sessionId] = { userId: 1, role: 'admin' }; // Assuming user 1 is the admin
 
-            res.status(200).json({ 
+            res.status(200).json({
                 message: 'Login successful',
                 token: sessionId // This is NOT a secure token
             });
@@ -33,8 +34,7 @@ export const authenticate = async (req: Request, res: Response) => {
             res.status(401).json({ message: 'Invalid credentials.' });
         }
     } catch (error) {
-        console.error('Authentication error:', error);
-        res.status(500).json({ message: 'Internal Server Error' });
+        next(error);
     }
 };
 

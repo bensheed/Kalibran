@@ -1,4 +1,4 @@
-import { Router } from 'express';
+import { Router, RequestHandler } from 'express';
 import {
     getAllBoards,
     createBoard,
@@ -9,9 +9,9 @@ import { isAdmin } from '../middleware/auth.middleware';
 
 const router = Router();
 
-router.get('/boards', getAllBoards);
-router.post('/boards', isAdmin, createBoard);
-router.get('/boards/:id', getBoardById);
-router.put('/boards/:id', isAdmin, updateBoard);
+router.get('/boards', getAllBoards as RequestHandler);
+router.post('/boards', isAdmin as RequestHandler, createBoard as RequestHandler);
+router.get('/boards/:id', getBoardById as RequestHandler);
+router.put('/boards/:id', isAdmin as RequestHandler, updateBoard as RequestHandler);
 
 export default router;
