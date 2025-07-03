@@ -18,8 +18,14 @@ function App() {
             // A simple API call to check the server status
             await api.get('/settings'); 
         } catch (error: any) {
-            if (error.response && error.response.status === 409 && error.response.data.setupRequired) {
-                navigate('/setup');
+            console.error("Failed to check server status:", error);
+            if (error.response) {
+                console.error("Error response:", error.response);
+                if (error.response.status === 409 && error.response.data.setupRequired) {
+                    navigate('/setup');
+                }
+            } else {
+                console.error("The error object does not have a 'response' property.");
             }
         } finally {
             setLoading(false);
