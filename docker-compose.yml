@@ -1,4 +1,5 @@
 version: '3.8'
+name: 'kalibran'
 
 services:
   backend:
@@ -18,7 +19,7 @@ services:
   db:
     image: postgres:13-alpine
     ports:
-      - "5433:5432"
+      - "5432:5432"
     environment:
       - POSTGRES_USER=kalibran_user
       - POSTGRES_PASSWORD=kalibran_password
