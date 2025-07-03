@@ -13,7 +13,7 @@ COPY package.json ./
 COPY tsconfig.json ./
 RUN npm install
 RUN npm install -g typescript
-COPY src/backend/ .
+COPY src/ ./src
 RUN tsc
 
 # Stage 3: Final image
