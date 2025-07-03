@@ -18,7 +18,7 @@ function App() {
             // A simple API call to check the server status
             await api.get('/settings'); 
         } catch (error: any) {
-            if (error.response && error.response.data.setupRequired) {
+            if (error.response && error.response.status === 409 && error.response.data.setupRequired) {
                 navigate('/setup');
             }
         } finally {
