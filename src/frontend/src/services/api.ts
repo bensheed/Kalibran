@@ -1,4 +1,4 @@
-import { default as axios } from 'axios';
+import axios = require('axios');
 
 const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001/api';
 
