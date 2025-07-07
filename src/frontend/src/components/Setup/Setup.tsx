@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 import api from '../../services/api';
 import { useNavigate } from 'react-router-dom';
+import Pin from './Pin';
+import ExternalTool from './ExternalTool';
+import Database from './Database';
+import DataSync from './DataSync';
+import './Setup.css';
 
 const Setup: React.FC = () => {
+    const [step, setStep] = useState(1);
     const [adminPin, setAdminPin] = useState('');
     const [dbType, setDbType] = useState('ProCal');
     const [dbHost, setDbHost] = useState('');
@@ -13,27 +19,41 @@ const Setup: React.FC = () => {
     const [error, setError] = useState('');
     const navigate = useNavigate();
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
+    const handleNext = () => {
+        setStep(step + 1);
+    };
+
+    const handleBack = () => {
+        setStep(step - 1);
+    };
+
+    const handleSubmit = async () => {
         setError('');
 
-        if (adminPin.length !== 4 || !/^\d{4}$/.test(adminPin)) {
-            setError('Admin PIN must be exactly 4 digits.');
-            return;
-        }
-
         try {
-            await api.post('/setup', {
-                adminPin,
-                externalDb: {
-                    type: dbType,
-                    host: dbHost,
-                    port: parseInt(dbPort, 10),
-                    user: dbUser,
-                    password: dbPassword,
-                    database: dbName,
-                },
+            // Step 1: Set PIN
+            if (adminPin.length !== 4 || !/^\d{4}$/.test(adminPin)) {
+                setError('Admin PIN must be exactly 4 digits.');
+                setStep(1);
+                return;
+            }
+            await api.post('/setup/pin', { adminPin });
+
+            // Step 2: Set External Tool
+            await api.post('/setup/external-tool', { dbType });
+
+            // Step 3: Set Database
+            await api.post('/setup/database', {
+                dbHost,
+                dbPort: parseInt(dbPort, 10),
+                dbUser,
+                dbPassword,
+                dbName,
             });
+
+            // Step 4: Complete Setup
+            await api.post('/setup/complete');
+
             alert('Setup complete! You can now log in.');
             navigate('/login');
         } catch (err: any) {
@@ -46,33 +66,30 @@ const Setup: React.FC = () => {
     };
 
     return (
-        <div>
+        <div className="setup-container">
             <h2>First-Time Setup</h2>
-            <form onSubmit={handleSubmit}>
-                <h4>Admin PIN</h4>
-                <input
-                    type="password"
-                    value={adminPin}
-                    onChange={(e) => setAdminPin(e.target.value)}
-                    placeholder="Enter a 4-digit PIN"
-                    maxLength={4}
-                />
-
-                <h4>External Database Configuration</h4>
-                <select value={dbType} onChange={(e) => setDbType(e.target.value)}>
-                    <option value="ProCal">ProCal</option>
-                    <option value="MetCal" disabled>MetCal (coming soon)</option>
-                    <option value="IndySoft" disabled>IndySoft (coming soon)</option>
-                </select>
-                <input type="text" value={dbHost} onChange={(e) => setDbHost(e.target.value)} placeholder="Host/IP" />
-                <input type="text" value={dbPort} onChange={(e) => setDbPort(e.target.value)} placeholder="Port" />
-                <input type="text" value={dbUser} onChange={(e) => setDbUser(e.target.value)} placeholder="Username" />
-                <input type="password" value={dbPassword} onChange={(e) => setDbPassword(e.target.value)} placeholder="Password" />
-                <input type="text" value={dbName} onChange={(e) => setDbName(e.target.value)} placeholder="Database Name" />
-
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                <button type="submit">Complete Setup</button>
-            </form>
+            {error && <p className="error-message">{error}</p>}
+            <div className="setup-step">
+                {step === 1 && <Pin adminPin={adminPin} setAdminPin={setAdminPin} onNext={handleNext} />}
+                {step === 2 && <ExternalTool dbType={dbType} setDbType={setDbType} onNext={handleNext} onBack={handleBack} />}
+                {step === 3 && (
+                    <Database
+                        dbHost={dbHost}
+                        setDbHost={setDbHost}
+                        dbPort={dbPort}
+                        setDbPort={setDbPort}
+                        dbUser={dbUser}
+                        setDbUser={setDbUser}
+                        dbPassword={dbPassword}
+                        setDbPassword={setDbPassword}
+                        dbName={dbName}
+                        setDbName={setDbName}
+                        onNext={handleNext}
+                        onBack={handleBack}
+                    />
+                )}
+                {step === 4 && <DataSync onBack={handleBack} onSubmit={handleSubmit} />}
+            </div>
         </div>
     );
 };
