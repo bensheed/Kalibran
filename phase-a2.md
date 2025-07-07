@@ -22,13 +22,22 @@
 **4. Update the application logic.**
     *   The application will no longer check for `setupRequired: true` in the same way. Instead, it will check for the presence of a PIN and a valid database connection. If either is missing, it will redirect to the setup page.
 
-**5. UX/UI Improvements**
+**5. Validation and Error Handling**
+    *   **Client-Side Validation:**
+        *   The "Next" button on the PIN step will be disabled until a valid 4-digit PIN is entered.
+        *   The "Next" button on the Database step will be disabled until all fields are filled.
+    *   **Backend Logging:**
+        *   Add detailed logging to the setup controller to track the entire setup process.
+    *   **Frontend Logging:**
+        *   Add detailed logging to the `handleSubmit` function in `Setup.tsx` to log the setup data and any errors that occur.
+
+**6. UX/UI Improvements**
     *   Add a loading indicator to the "Complete Setup" button to provide feedback to the user.
     *   Add a database connection test to the database configuration step to provide immediate feedback to the user.
     *   Add a "Test Connection" button to the database configuration step.
     *   Add a success message after the database connection is successfully tested.
 
-**6. Future Development: DataSync.tsx**
+**7. Future Development: DataSync.tsx**
     *   **Table Selection:** Allow the user to view and select tables from the connected external database.
     *   **Join Query Builder:** Provide a UI for building join queries between the selected tables.
         *   The user should be able to specify the join type (e.g., INNER JOIN, LEFT JOIN).

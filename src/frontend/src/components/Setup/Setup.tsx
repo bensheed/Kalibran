@@ -31,6 +31,14 @@ const Setup: React.FC = () => {
     const handleSubmit = async () => {
         setError('');
         setLoading(true);
+        console.log('Submitting setup data:', {
+            adminPin,
+            dbType,
+            dbHost,
+            dbPort,
+            dbUser,
+            dbName,
+        });
 
         if (adminPin.length !== 4 || !/^\d{4}$/.test(adminPin)) {
             setError('Admin PIN must be exactly 4 digits.');
@@ -40,7 +48,7 @@ const Setup: React.FC = () => {
         }
 
         try {
-            await api.post('/setup', {
+            const response = await api.post('/setup', {
                 adminPin,
                 dbType,
                 dbHost,
@@ -49,11 +57,14 @@ const Setup: React.FC = () => {
                 dbPassword,
                 dbName,
             });
+            console.log('Setup successful:', response.data);
             alert('Setup complete! You can now log in.');
             navigate('/login');
         } catch (err: any) {
-            if (err.response && err.response.data && err.response.data.message) {
-                setError(err.response.data.message);
+            console.error('Setup failed:', err);
+            if (err.response) {
+                console.error('Error response:', err.response);
+                setError(err.response.data.message || 'An unexpected error occurred.');
             } else {
                 setError('An unexpected error occurred. Please try again.');
             }

@@ -29,6 +29,8 @@ const Database: React.FC<DatabaseProps> = ({
   onNext,
   onBack,
 }) => {
+  const areFieldsFilled = dbHost && dbPort && dbUser && dbPassword && dbName;
+
   return (
     <div>
       <h2>Step 3: Database Configuration</h2>
@@ -38,7 +40,9 @@ const Database: React.FC<DatabaseProps> = ({
       <input type="password" value={dbPassword} onChange={(e) => setDbPassword(e.target.value)} placeholder="Password" />
       <input type="text" value={dbName} onChange={(e) => setDbName(e.target.value)} placeholder="Database Name" />
       <button onClick={onBack}>Back</button>
-      <button onClick={onNext}>Next</button>
+      <button onClick={onNext} disabled={!areFieldsFilled}>
+        Next
+      </button>
     </div>
   );
 };

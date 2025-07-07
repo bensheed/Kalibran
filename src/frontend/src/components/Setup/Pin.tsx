@@ -7,6 +7,8 @@ interface PinProps {
 }
 
 const Pin: React.FC<PinProps> = ({ adminPin, setAdminPin, onNext }) => {
+  const isPinValid = /^\d{4}$/.test(adminPin);
+
   return (
     <div>
       <h2>Step 1: Create Admin PIN</h2>
@@ -17,7 +19,9 @@ const Pin: React.FC<PinProps> = ({ adminPin, setAdminPin, onNext }) => {
         placeholder="Enter a 4-digit PIN"
         maxLength={4}
       />
-      <button onClick={onNext}>Next</button>
+      <button onClick={onNext} disabled={!isPinValid}>
+        Next
+      </button>
     </div>
   );
 };
