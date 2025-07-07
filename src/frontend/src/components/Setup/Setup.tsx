@@ -17,6 +17,7 @@ const Setup: React.FC = () => {
     const [dbPassword, setDbPassword] = useState('');
     const [dbName, setDbName] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
     const handleNext = () => {
@@ -29,31 +30,25 @@ const Setup: React.FC = () => {
 
     const handleSubmit = async () => {
         setError('');
+        setLoading(true);
+
+        if (adminPin.length !== 4 || !/^\d{4}$/.test(adminPin)) {
+            setError('Admin PIN must be exactly 4 digits.');
+            setStep(1);
+            setLoading(false);
+            return;
+        }
 
         try {
-            // Step 1: Set PIN
-            if (adminPin.length !== 4 || !/^\d{4}$/.test(adminPin)) {
-                setError('Admin PIN must be exactly 4 digits.');
-                setStep(1);
-                return;
-            }
-            await api.post('/setup/pin', { adminPin });
-
-            // Step 2: Set External Tool
-            await api.post('/setup/external-tool', { dbType });
-
-            // Step 3: Set Database
-            await api.post('/setup/database', {
+            await api.post('/setup', {
+                adminPin,
+                dbType,
                 dbHost,
                 dbPort: parseInt(dbPort, 10),
                 dbUser,
                 dbPassword,
                 dbName,
             });
-
-            // Step 4: Complete Setup
-            await api.post('/setup/complete');
-
             alert('Setup complete! You can now log in.');
             navigate('/login');
         } catch (err: any) {
@@ -62,6 +57,8 @@ const Setup: React.FC = () => {
             } else {
                 setError('An unexpected error occurred. Please try again.');
             }
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -88,7 +85,7 @@ const Setup: React.FC = () => {
                         onBack={handleBack}
                     />
                 )}
-                {step === 4 && <DataSync onBack={handleBack} onSubmit={handleSubmit} />}
+                {step === 4 && <DataSync onBack={handleBack} onSubmit={handleSubmit} loading={loading} />}
             </div>
         </div>
     );

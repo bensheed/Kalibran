@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import pool from '../services/database.service';
+import { Pool } from 'pg';
 
 export const setDatabase = async (req: Request, res: Response) => {
     const { dbHost, dbPort, dbUser, dbPassword, dbName } = req.body;
@@ -15,6 +16,18 @@ export const setDatabase = async (req: Request, res: Response) => {
         password: dbPassword,
         database: dbName,
     };
+
+    // Test the database connection
+    const testPool = new Pool(dbConfig);
+    try {
+        const testClient = await testPool.connect();
+        testClient.release();
+    } catch (error) {
+        console.error('Failed to connect to the database:', error);
+        return res.status(400).json({ message: 'Failed to connect to the database. Please check your credentials.' });
+    } finally {
+        await testPool.end();
+    }
 
     try {
         const client = await pool.connect();

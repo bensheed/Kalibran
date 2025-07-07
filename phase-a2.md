@@ -16,13 +16,19 @@
 **3. Implement the new setup flow.**
     *   Create a new route for the setup page.
     *   Create a new React component for the setup UI.
-    *   Update the backend to handle the new setup order.
+    *   Update the backend to handle the new setup order in a single transaction.
     *   The backend will now first check for a PIN, then for database configuration, etc.
 
 **4. Update the application logic.**
     *   The application will no longer check for `setupRequired: true` in the same way. Instead, it will check for the presence of a PIN and a valid database connection. If either is missing, it will redirect to the setup page.
 
-**5. Future Development: DataSync.tsx**
+**5. UX/UI Improvements**
+    *   Add a loading indicator to the "Complete Setup" button to provide feedback to the user.
+    *   Add a database connection test to the database configuration step to provide immediate feedback to the user.
+    *   Add a "Test Connection" button to the database configuration step.
+    *   Add a success message after the database connection is successfully tested.
+
+**6. Future Development: DataSync.tsx**
     *   **Table Selection:** Allow the user to view and select tables from the connected external database.
     *   **Join Query Builder:** Provide a UI for building join queries between the selected tables.
         *   The user should be able to specify the join type (e.g., INNER JOIN, LEFT JOIN).
