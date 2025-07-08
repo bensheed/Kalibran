@@ -20,6 +20,8 @@ const DataSync: React.FC<DataSyncProps> = ({ onBack, onSubmit, loading }) => {
     Instruments: ['Inst_ID', 'Description', 'Manufacturer'],
   };
 
+  console.log('Rendering DataSync component');
+
   return (
     <div>
       <h2>Step 4: Configure Data Sync</h2>

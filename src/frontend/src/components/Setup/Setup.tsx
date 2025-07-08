@@ -31,6 +31,7 @@ const Setup: React.FC = () => {
     const handleDbSubmit = async () => {
         setError('');
         setLoading(true);
+        console.log('Submitting database credentials...');
         try {
             const response = await api.post('/setup', {
                 adminPin,
@@ -42,15 +43,22 @@ const Setup: React.FC = () => {
                 dbName,
             });
 
+            console.log('API Response:', response);
+
             if (response.status === 201) {
+                console.log('Setup successful, navigating to next step.');
                 handleNext();
             } else {
+                console.error('API call was not successful, but did not throw an error.', response);
                 setError(response.data.message || 'An unexpected error occurred.');
             }
         } catch (err: any) {
+            console.error('API call failed and threw an error:', err);
             if (err.response) {
+                console.error('Error response data:', err.response.data);
                 setError(err.response.data.message || 'An unexpected error occurred.');
             } else {
+                console.error('Error does not have a response object:', err.message);
                 setError('An unexpected error occurred. Please try again.');
             }
         } finally {
