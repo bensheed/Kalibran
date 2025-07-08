@@ -32,7 +32,7 @@ const Setup: React.FC = () => {
         setError('');
         setLoading(true);
         try {
-            await api.post('/setup', {
+            const response = await api.post('/setup', {
                 adminPin,
                 dbType,
                 dbHost,
@@ -41,7 +41,12 @@ const Setup: React.FC = () => {
                 dbPassword,
                 dbName,
             });
-            handleNext();
+
+            if (response.status === 201) {
+                handleNext();
+            } else {
+                setError(response.data.message || 'An unexpected error occurred.');
+            }
         } catch (err: any) {
             if (err.response) {
                 setError(err.response.data.message || 'An unexpected error occurred.');
