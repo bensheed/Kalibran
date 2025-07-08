@@ -96,3 +96,27 @@ export const setup = async (req: Request, res: Response) => {
         console.log('Database pool closed.');
     }
 };
+
+export const resetSetup = async (req: Request, res: Response) => {
+    console.log('Received request to reset setup');
+    try {
+        const client = await pool.connect();
+        try {
+            await client.query('BEGIN');
+            // This will delete all settings, effectively resetting the application
+            await client.query('DELETE FROM settings');
+            console.log('All settings have been deleted.');
+            await client.query('COMMIT');
+            res.status(200).json({ message: 'Setup has been reset successfully.' });
+        } catch (error) {
+            await client.query('ROLLBACK');
+            throw error;
+        } finally {
+            client.release();
+        }
+    } catch (error) {
+        console.error('Failed to reset setup:', error);
+        res.status(500).json({ message: 'An internal server error occurred during reset.' });
+    }
+};
+

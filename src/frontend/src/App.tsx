@@ -21,7 +21,7 @@ function App() {
             console.error("Failed to check server status:", error);
             if (error.response) {
                 console.error("Error response:", error.response);
-                if (error.response.status === 409 && error.response.data.setupRequired) {
+                if (error.response.status === 409) {
                     navigate('/setup');
                 }
             } else {

@@ -71,9 +71,33 @@ const Setup: React.FC = () => {
         navigate('/login');
     };
 
+    const handleReset = async () => {
+        if (window.confirm('Are you sure you want to reset the setup? This will clear all settings.')) {
+            try {
+                await api.post('/setup/reset');
+                // Reset state to the beginning
+                setStep(1);
+                setAdminPin('');
+                setDbType('ProCal');
+                setDbHost('');
+                setDbPort('');
+                setDbUser('');
+                setDbPassword('');
+                setDbName('');
+                setError('');
+                alert('Setup has been reset. You can now start over.');
+            } catch (err: any) {
+                setError('Failed to reset setup. Please check the server logs.');
+            }
+        }
+    };
+
     return (
         <div className="setup-container">
-            <h2>First-Time Setup</h2>
+            <div className="setup-header">
+                <h2>First-Time Setup</h2>
+                <button onClick={handleReset} className="reset-button">Reset Setup</button>
+            </div>
             {error && <p className="error-message">{error}</p>}
             <div className="setup-step">
                 {step === 1 && <Pin adminPin={adminPin} setAdminPin={setAdminPin} onNext={handleNext} />}
