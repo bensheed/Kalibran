@@ -1,5 +1,5 @@
 import { Router, RequestHandler } from 'express';
-import { setup, testDbConnection } from '../controllers/setup.controller';
+import { setup, resetSetup } from '../controllers/setup.controller';
 
 const router = Router();
 
