@@ -32,7 +32,9 @@ const Setup: React.FC = () => {
         setError('');
         setLoading(true);
         try {
-            await api.post('/setup/test-db', {
+            await api.post('/setup', {
+                adminPin,
+                dbType,
                 dbHost,
                 dbPort: parseInt(dbPort, 10),
                 dbUser,
@@ -51,33 +53,9 @@ const Setup: React.FC = () => {
         }
     };
 
-    const handleSubmit = async () => {
-        setError('');
-        setLoading(true);
-        try {
-            const response = await api.post('/setup', {
-                adminPin,
-                dbType,
-                dbHost,
-                dbPort: parseInt(dbPort, 10),
-                dbUser,
-                dbPassword,
-                dbName,
-            });
-            console.log('Setup successful:', response.data);
-            alert('Setup complete! You can now log in.');
-            navigate('/login');
-        } catch (err: any) {
-            console.error('Setup failed:', err);
-            if (err.response) {
-                console.error('Error response:', err.response);
-                setError(err.response.data.message || 'An unexpected error occurred.');
-            } else {
-                setError('An unexpected error occurred. Please try again.');
-            }
-        } finally {
-            setLoading(false);
-        }
+    const handleFinalSubmit = () => {
+        alert('Setup complete! You can now log in.');
+        navigate('/login');
     };
 
     return (
@@ -103,7 +81,7 @@ const Setup: React.FC = () => {
                         onBack={handleBack}
                     />
                 )}
-                {step === 4 && <DataSync onBack={handleBack} onSubmit={handleSubmit} loading={loading} />}
+                {step === 4 && <DataSync onBack={handleBack} onSubmit={handleFinalSubmit} loading={loading} />}
             </div>
         </div>
     );
