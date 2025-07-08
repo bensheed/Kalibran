@@ -28,25 +28,32 @@ const Setup: React.FC = () => {
         setStep(step - 1);
     };
 
+    const handleDbSubmit = async () => {
+        setError('');
+        setLoading(true);
+        try {
+            await api.post('/setup/test-db', {
+                dbHost,
+                dbPort: parseInt(dbPort, 10),
+                dbUser,
+                dbPassword,
+                dbName,
+            });
+            handleNext();
+        } catch (err: any) {
+            if (err.response) {
+                setError(err.response.data.message || 'An unexpected error occurred.');
+            } else {
+                setError('An unexpected error occurred. Please try again.');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
     const handleSubmit = async () => {
         setError('');
         setLoading(true);
-        console.log('Submitting setup data:', {
-            adminPin,
-            dbType,
-            dbHost,
-            dbPort,
-            dbUser,
-            dbName,
-        });
-
-        if (adminPin.length !== 4 || !/^\d{4}$/.test(adminPin)) {
-            setError('Admin PIN must be exactly 4 digits.');
-            setStep(1);
-            setLoading(false);
-            return;
-        }
-
         try {
             const response = await api.post('/setup', {
                 adminPin,
@@ -92,7 +99,7 @@ const Setup: React.FC = () => {
                         setDbPassword={setDbPassword}
                         dbName={dbName}
                         setDbName={setDbName}
-                        onNext={handleNext}
+                        onNext={handleDbSubmit}
                         onBack={handleBack}
                     />
                 )}

@@ -5,16 +5,11 @@ import { Pool } from 'pg';
 import fs from 'fs';
 import path from 'path';
 
-export const setup = async (req: Request, res: Response) => {
+export const testDbConnection = async (req: Request, res: Response) => {
     console.log('Received setup request:', req.body);
-    const { adminPin, dbType, dbHost, dbPort, dbUser, dbPassword, dbName } = req.body;
+    const { dbHost, dbPort, dbUser, dbPassword, dbName } = req.body;
 
-    // Basic validation
-    if (!adminPin || typeof adminPin !== 'string' || !/^\d{4}$/.test(adminPin)) {
-        console.log('Validation failed: Invalid PIN');
-        return res.status(400).json({ message: 'A 4-digit PIN is required.' });
-    }
-    if (!dbType || !dbHost || !dbPort || !dbUser || !dbPassword || !dbName) {
+    if (!dbHost || !dbPort || !dbUser || !dbPassword || !dbName) {
         console.log('Validation failed: Missing database fields');
         return res.status(400).json({ message: 'All database fields are required.' });
     }
@@ -45,15 +40,40 @@ export const setup = async (req: Request, res: Response) => {
         } finally {
             testClient.release();
         }
+        res.status(200).json({ message: 'Database connection successful.' });
     } catch (error) {
         console.error('Failed to connect to the database:', error);
         return res.status(400).json({ message: 'Failed to connect to the database. Please check your credentials.' });
     } finally {
         await testPool.end();
     }
+};
+
+export const setup = async (req: Request, res: Response) => {
+    console.log('Received setup request:', req.body);
+    const { adminPin, dbType, dbHost, dbPort, dbUser, dbPassword, dbName } = req.body;
+
+    // Basic validation
+    if (!adminPin || typeof adminPin !== 'string' || !/^\d{4}$/.test(adminPin)) {
+        console.log('Validation failed: Invalid PIN');
+        return res.status(400).json({ message: 'A 4-digit PIN is required.' });
+    }
+    if (!dbType || !dbHost || !dbPort || !dbUser || !dbPassword || !dbName) {
+        console.log('Validation failed: Missing database fields');
+        return res.status(400).json({ message: 'All database fields are required.' });
+    }
+
+    const dbConfig = {
+        host: dbHost,
+        port: dbPort,
+        user: dbUser,
+        password: dbPassword,
+        database: dbName,
+    };
 
     try {
         console.log('Connecting to the main database pool...');
+        const testPool = new Pool(dbConfig);
         const client = await testPool.connect();
         console.log('Connected to main database pool');
         try {
