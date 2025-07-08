@@ -54,12 +54,10 @@ const Setup: React.FC = () => {
             }
         } catch (err: any) {
             console.error('API call failed and threw an error:', err);
-            if (err.response) {
-                console.error('Error response data:', err.response.data);
-                setError(err.response.data.message || 'An unexpected error occurred.');
+            if (err.response && err.response.data && err.response.data.message) {
+                setError(`Error: ${err.response.data.message}`);
             } else {
-                console.error('Error does not have a response object:', err.message);
-                setError('An unexpected error occurred. Please try again.');
+                setError('An unknown error occurred. Please check the server logs.');
             }
         } finally {
             setLoading(false);

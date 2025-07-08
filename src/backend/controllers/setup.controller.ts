@@ -44,25 +44,28 @@ export const setup = async (req: Request, res: Response) => {
         console.log('Saving configuration settings...');
         await client.query('BEGIN');
 
+        // Clear any previous, incomplete setup data
+        await client.query('DELETE FROM settings');
+
         const salt = await bcrypt.genSalt(10);
         const hashedPin = await bcrypt.hash(adminPin, salt);
         await client.query(
-            "INSERT INTO settings (setting_key, setting_value) VALUES ('admin_pin', $1) ON CONFLICT (setting_key) DO UPDATE SET setting_value = $1",
+            "INSERT INTO settings (setting_key, setting_value) VALUES ('admin_pin', $1)",
             [hashedPin]
         );
 
         await client.query(
-            "INSERT INTO settings (setting_key, setting_value) VALUES ('external_db_type', $1) ON CONFLICT (setting_key) DO UPDATE SET setting_value = $1",
+            "INSERT INTO settings (setting_key, setting_value) VALUES ('external_db_type', $1)",
             [dbType]
         );
 
         await client.query(
-            "INSERT INTO settings (setting_key, setting_value) VALUES ('external_db_config', $1) ON CONFLICT (setting_key) DO UPDATE SET setting_value = $1",
+            "INSERT INTO settings (setting_key, setting_value) VALUES ('external_db_config', $1)",
             [JSON.stringify(dbConfig)]
         );
 
         await client.query(
-            "INSERT INTO settings (setting_key, setting_value) VALUES ('setup_complete', 'true') ON CONFLICT (setting_key) DO UPDATE SET setting_value = 'true'"
+            "INSERT INTO settings (setting_key, setting_value) VALUES ('setup_complete', 'true')"
         );
 
         await client.query('COMMIT');
