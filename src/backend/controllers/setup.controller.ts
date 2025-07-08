@@ -27,85 +27,72 @@ export const setup = async (req: Request, res: Response) => {
         database: dbName,
     };
 
-    // Test the database connection
-    console.log('Testing database connection...');
-    const testPool = new Pool(dbConfig);
-    try {
-        const testClient = await testPool.connect();
-        console.log('Database connection test successful');
+    const pool = new Pool(dbConfig);
+    let client: any;
 
-        // Execute the init.sql script
-        try {
-            const initSql = fs.readFileSync(path.join(__dirname, '../../../database/init.sql'), 'utf8');
-            await testClient.query(initSql);
-            console.log('Database initialization script executed successfully');
-        } catch (error) {
-            console.error('Failed to execute init.sql:', error);
-            return res.status(500).json({ message: 'Failed to initialize the database.' });
-        } finally {
-            testClient.release();
+    try {
+        // 1. Test Connection and Initialize DB
+        console.log('Connecting to database to test connection and initialize...');
+        client = await pool.connect();
+        console.log('Database connection successful.');
+
+        const initSql = fs.readFileSync(path.join(__dirname, '../../../database/init.sql'), 'utf8');
+        await client.query(initSql);
+        console.log('Database initialization script executed successfully.');
+
+        // 2. Save Settings
+        console.log('Saving configuration settings...');
+        await client.query('BEGIN');
+
+        const salt = await bcrypt.genSalt(10);
+        const hashedPin = await bcrypt.hash(adminPin, salt);
+        await client.query(
+            "INSERT INTO settings (setting_key, setting_value) VALUES ('admin_pin', $1) ON CONFLICT (setting_key) DO UPDATE SET setting_value = $1",
+            [hashedPin]
+        );
+
+        await client.query(
+            "INSERT INTO settings (setting_key, setting_value) VALUES ('external_db_type', $1) ON CONFLICT (setting_key) DO UPDATE SET setting_value = $1",
+            [dbType]
+        );
+
+        await client.query(
+            "INSERT INTO settings (setting_key, setting_value) VALUES ('external_db_config', $1) ON CONFLICT (setting_key) DO UPDATE SET setting_value = $1",
+            [JSON.stringify(dbConfig)]
+        );
+
+        await client.query(
+            "INSERT INTO settings (setting_key, setting_value) VALUES ('setup_complete', 'true') ON CONFLICT (setting_key) DO UPDATE SET setting_value = 'true'"
+        );
+
+        await client.query('COMMIT');
+        console.log('Configuration saved and setup complete.');
+
+        res.status(201).json({ message: 'Setup completed successfully.' });
+
+    } catch (error: any) {
+        console.error('Setup failed during database operation:', error);
+        if (client) {
+            try {
+                await client.query('ROLLBACK');
+            } catch (rbError) {
+                console.error('Rollback failed:', rbError);
+            }
         }
-    } catch (error) {
-        console.error('Failed to connect to the database:', error);
-        return res.status(400).json({ message: 'Failed to connect to the database. Please check your credentials.' });
+        // Provide a more specific error message if possible
+        if (error.code === '28P01') { // PostgreSQL authentication error
+            return res.status(400).json({ message: 'Authentication failed. Please check your username and password.' });
+        }
+        if (error.code === '3D000') { // PostgreSQL database does not exist error
+            return res.status(400).json({ message: `Database "${dbName}" does not exist. Please create it first.` });
+        }
+        return res.status(500).json({ message: 'Failed to connect to or initialize the database. Please check your credentials and ensure the database exists.' });
+
     } finally {
-        await testPool.end();
-    }
-
-    try {
-        console.log('Connecting to the main database pool...');
-        const client = await testPool.connect();
-        console.log('Connected to main database pool');
-        try {
-            await client.query('BEGIN');
-            console.log('Transaction started');
-
-            // Hash the admin PIN
-            const salt = await bcrypt.genSalt(10);
-            const hashedPin = await bcrypt.hash(adminPin, salt);
-            console.log('PIN hashed');
-
-            // Save the hashed PIN
-            await client.query(
-                "INSERT INTO settings (setting_key, setting_value) VALUES ('admin_pin', $1) ON CONFLICT (setting_key) DO UPDATE SET setting_value = $1",
-                [hashedPin]
-            );
-            console.log('PIN saved');
-
-            // Save external DB type
-            await client.query(
-                "INSERT INTO settings (setting_key, setting_value) VALUES ('external_db_type', $1) ON CONFLICT (setting_key) DO UPDATE SET setting_value = $1",
-                [dbType]
-            );
-            console.log('External DB type saved');
-
-            // Save external DB config
-            await client.query(
-                "INSERT INTO settings (setting_key, setting_value) VALUES ('external_db_config', $1) ON CONFLICT (setting_key) DO UPDATE SET setting_value = $1",
-                [JSON.stringify(dbConfig)]
-            );
-            console.log('External DB config saved');
-
-            // Mark setup as complete
-            await client.query(
-                "INSERT INTO settings (setting_key, setting_value) VALUES ('setup_complete', 'true') ON CONFLICT (setting_key) DO UPDATE SET setting_value = 'true'"
-            );
-            console.log('Setup marked as complete');
-
-            await client.query('COMMIT');
-            console.log('Transaction committed');
-            res.status(201).json({ message: 'Setup completed successfully.' });
-        } catch (error) {
-            console.error('Transaction failed, rolling back:', error);
-            await client.query('ROLLBACK');
-            throw error;
-        } finally {
+        if (client) {
             client.release();
-            console.log('Client released');
         }
-    } catch (error) {
-        console.error('Setup failed:', error);
-        const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred.';
-        res.status(500).json({ message: `Internal server error during setup: ${errorMessage}` });
+        await pool.end();
+        console.log('Database pool closed.');
     }
 };
