@@ -36,9 +36,12 @@ try {
         $selectedBranch = $sortedBranches[[int]$selection - 1].Name
         Write-Host "You selected: $selectedBranch"
 
+        # Sanitize the branch name for use in a filename by replacing '/' with '-'
+        $safeBranchName = $selectedBranch.Replace('/', '-')
+        
         # Download the selected branch
         $zipUrl = "https://github.com/$repo/archive/refs/heads/$selectedBranch.zip"
-        $outputFile = "$selectedBranch.zip"
+        $outputFile = "$safeBranchName.zip"
         Write-Host "Downloading $zipUrl..."
         Invoke-WebRequest -Uri $zipUrl -OutFile $outputFile
 
