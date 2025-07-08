@@ -2,6 +2,8 @@ import { Request, Response } from 'express';
 import pool from '../services/database.service';
 import bcrypt from 'bcrypt';
 import { Pool } from 'pg';
+import fs from 'fs';
+import path from 'path';
 
 export const setup = async (req: Request, res: Response) => {
     console.log('Received setup request:', req.body);
@@ -30,8 +32,19 @@ export const setup = async (req: Request, res: Response) => {
     const testPool = new Pool(dbConfig);
     try {
         const testClient = await testPool.connect();
-        testClient.release();
         console.log('Database connection test successful');
+
+        // Execute the init.sql script
+        try {
+            const initSql = fs.readFileSync(path.join(__dirname, '../../../database/init.sql'), 'utf8');
+            await testClient.query(initSql);
+            console.log('Database initialization script executed successfully');
+        } catch (error) {
+            console.error('Failed to execute init.sql:', error);
+            return res.status(500).json({ message: 'Failed to initialize the database.' });
+        } finally {
+            testClient.release();
+        }
     } catch (error) {
         console.error('Failed to connect to the database:', error);
         return res.status(400).json({ message: 'Failed to connect to the database. Please check your credentials.' });
@@ -41,7 +54,7 @@ export const setup = async (req: Request, res: Response) => {
 
     try {
         console.log('Connecting to the main database pool...');
-        const client = await pool.connect();
+        const client = await testPool.connect();
         console.log('Connected to main database pool');
         try {
             await client.query('BEGIN');

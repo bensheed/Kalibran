@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 interface PinProps {
   adminPin: string;
@@ -7,7 +7,21 @@ interface PinProps {
 }
 
 const Pin: React.FC<PinProps> = ({ adminPin, setAdminPin, onNext }) => {
-  const isPinValid = /^\d{4}$/.test(adminPin);
+  const [confirmPin, setConfirmPin] = useState('');
+  const [error, setError] = useState('');
+
+  const handleNext = () => {
+    if (adminPin.length < 4) {
+      setError('PIN must be at least 4 digits.');
+      return;
+    }
+    if (adminPin !== confirmPin) {
+      setError('PINs do not match.');
+      return;
+    }
+    setError('');
+    onNext();
+  };
 
   return (
     <div>
@@ -19,7 +33,15 @@ const Pin: React.FC<PinProps> = ({ adminPin, setAdminPin, onNext }) => {
         placeholder="Enter a 4-digit PIN"
         maxLength={4}
       />
-      <button onClick={onNext} disabled={!isPinValid}>
+      <input
+        type="password"
+        value={confirmPin}
+        onChange={(e) => setConfirmPin(e.target.value)}
+        placeholder="Confirm your 4-digit PIN"
+        maxLength={4}
+      />
+      {error && <p style={{ color: 'red' }}>{error}</p>}
+      <button onClick={handleNext} disabled={!adminPin || !confirmPin}>
         Next
       </button>
     </div>
