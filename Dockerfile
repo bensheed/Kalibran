@@ -13,7 +13,7 @@ COPY package*.json ./
 COPY tsconfig.json ./
 RUN npm install
 COPY src/ ./src
-RUN npm run build
+RUN tsc
 
 # Stage 3: Final image
 FROM node:20-alpine
@@ -25,3 +25,4 @@ COPY --from=frontend-builder /app/frontend/build ./src/frontend/build
 COPY database ./database
 EXPOSE 3001
 CMD ["node", "dist/src/backend/index.js"]
+
