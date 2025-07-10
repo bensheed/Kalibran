@@ -35,7 +35,7 @@ app.use(cors());
 app.use(express.json());
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../frontend/build')));
+app.use(express.static(path.join(__dirname, '../../src/frontend/build')));
 
 // Setup check middleware
 const checkSetup = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -89,7 +89,7 @@ app.post('/api/login', (req, res, next) => {
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+  res.sendFile(path.join(__dirname, '../../src/frontend/build/index.html'));
 });
 
 server.listen(port, () => {
