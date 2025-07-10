@@ -43,7 +43,7 @@ export const setup = async (req: Request, res: Response) => {
         const client = await pool.connect();
         try {
             console.log('Connecting to internal database to save settings...');
-            const initSql = fs.readFileSync(path.join(__dirname, '../../../database/init.sql'), 'utf8');
+            const initSql = fs.readFileSync(path.join(__dirname, '../../database/init.sql'), 'utf8');
             await client.query(initSql);
             console.log('Internal database initialization script executed successfully.');
 
