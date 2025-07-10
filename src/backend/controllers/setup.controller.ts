@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import pool from '../services/database.service';
 import bcrypt from 'bcrypt';
-import { Pool } from 'pg';
+import sql from 'mssql';
 import fs from 'fs';
 import path from 'path';
 
@@ -20,89 +20,83 @@ export const setup = async (req: Request, res: Response) => {
     }
 
     const dbConfig = {
-        host: dbHost,
-        port: dbPort,
         user: dbUser,
         password: dbPassword,
+        server: dbHost,
+        port: dbPort,
         database: dbName,
+        options: {
+            encrypt: true, // Use this if you're on Azure
+            trustServerCertificate: true // Change to true for local dev / self-signed certs
+        }
     };
 
-    const pool = new Pool(dbConfig);
-    let client: any;
-
     try {
-        // 1. Test Connection and Initialize DB
-        console.log('Connecting to database to test connection and initialize...');
-        client = await pool.connect();
-        console.log('Database connection successful.');
+        // 1. Test External DB Connection
+        console.log('Connecting to external database to test connection...');
+        await sql.connect(dbConfig);
+        console.log('External database connection successful.');
+        await sql.close();
 
-        const initSql = fs.readFileSync(path.join(__dirname, '../../../database/init.sql'), 'utf8');
-        await client.query(initSql);
-        console.log('Database initialization script executed successfully.');
+        // 2. Connect to Internal DB and Save Settings
+        const client = await pool.connect();
+        try {
+            console.log('Connecting to internal database to save settings...');
+            const initSql = fs.readFileSync(path.join(__dirname, '../../../database/init.sql'), 'utf8');
+            await client.query(initSql);
+            console.log('Internal database initialization script executed successfully.');
 
-        // 2. Save Settings
-        console.log('Saving configuration settings...');
-        await client.query('BEGIN');
+            await client.query('BEGIN');
 
-        // Clear any previous, incomplete setup data
-        await client.query('DELETE FROM settings');
+            // Clear any previous, incomplete setup data
+            await client.query('DELETE FROM settings');
 
-        const salt = await bcrypt.genSalt(10);
-        const hashedPin = await bcrypt.hash(adminPin, salt);
-        await client.query(
-            "INSERT INTO settings (setting_key, setting_value) VALUES ('admin_pin', $1)",
-            [hashedPin]
-        );
+            const salt = await bcrypt.genSalt(10);
+            const hashedPin = await bcrypt.hash(adminPin, salt);
+            await client.query(
+                "INSERT INTO settings (setting_key, setting_value) VALUES ('admin_pin', $1)",
+                [hashedPin]
+            );
 
-        await client.query(
-            "INSERT INTO settings (setting_key, setting_value) VALUES ('external_db_type', $1)",
-            [dbType]
-        );
+            await client.query(
+                "INSERT INTO settings (setting_key, setting_value) VALUES ('external_db_type', $1)",
+                [dbType]
+            );
 
-        await client.query(
-            "INSERT INTO settings (setting_key, setting_value) VALUES ('external_db_config', $1)",
-            [JSON.stringify(dbConfig)]
-        );
+            await client.query(
+                "INSERT INTO settings (setting_key, setting_value) VALUES ('external_db_config', $1)",
+                [JSON.stringify(dbConfig)]
+            );
 
-        await client.query(
-            "INSERT INTO settings (setting_key, setting_value) VALUES ('setup_complete', 'true')"
-        );
+            await client.query(
+                "INSERT INTO settings (setting_key, setting_value) VALUES ('setup_complete', 'true')"
+            );
 
-        await client.query('COMMIT');
-        console.log('Configuration saved and setup complete.');
+            await client.query('COMMIT');
+            console.log('Configuration saved and setup complete.');
 
-        res.status(201).json({ message: 'Setup completed successfully.' });
+            res.status(201).json({ message: 'Setup completed successfully.' });
 
-    } catch (error: any) {
-        console.error('Setup failed during database operation:', error);
-        if (client) {
-            try {
-                await client.query('ROLLBACK');
-            } catch (rbError) {
-                console.error('Rollback failed:', rbError);
-            }
-        }
-        // Provide a more specific error message if possible
-        if (error.message.includes('Connection terminated unexpectedly')) {
-            return res.status(400).json({ message: 'Connection terminated unexpectedly. This may be due to an unsupported database type or version. This application currently only supports PostgreSQL.' });
-        }
-        if (error.code === '28P01') { // PostgreSQL authentication error
-            return res.status(401).json({ message: 'Authentication failed. Please check your username and password.' });
-        }
-        if (error.code === '3D000') { // PostgreSQL database does not exist error
-            return res.status(404).json({ message: `Database "${dbName}" does not exist. Please create it first.` });
-        }
-        if (error.code === 'ECONNREFUSED') {
-            return res.status(400).json({ message: `Connection refused. Please check the host and port.` });
-        }
-        return res.status(500).json({ message: 'Failed to connect to or initialize the database. Please check your credentials and ensure the database exists.' });
-
-    } finally {
-        if (client) {
+        } catch (error: any) {
+            console.error('Setup failed during internal database operation:', error);
+            await client.query('ROLLBACK');
+            throw error; // Re-throw to be caught by the outer catch block
+        } finally {
             client.release();
         }
-        await pool.end();
-        console.log('Database pool closed.');
+
+    } catch (error: any) {
+        console.error('Setup failed:', error);
+        if (error.code === 'ELOGIN') {
+            return res.status(401).json({ message: `Authentication failed for user '${dbUser}'. Please check the username and password.` });
+        }
+        if (error.code === 'ENOTFOUND') {
+            return res.status(404).json({ message: `Server not found at '${dbHost}'. Please check the host address.` });
+        }
+        if (error.code === 'ECONNREFUSED') {
+            return res.status(400).json({ message: `Connection refused on port ${dbPort}. Please check the port number.` });
+        }
+        return res.status(500).json({ message: 'Failed to connect to the external database. Please check your credentials and network connection.' });
     }
 };
 
