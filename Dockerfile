@@ -12,6 +12,7 @@ WORKDIR /app
 COPY package*.json ./
 COPY tsconfig.json ./
 RUN npm install
+RUN npm install -g typescript
 COPY src/ ./src
 RUN tsc
 
@@ -25,4 +26,5 @@ COPY --from=frontend-builder /app/frontend/build ./src/frontend/build
 COPY database ./database
 EXPOSE 3001
 CMD ["node", "dist/src/backend/index.js"]
+
 
