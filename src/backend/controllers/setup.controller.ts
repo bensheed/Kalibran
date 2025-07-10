@@ -84,10 +84,10 @@ export const setup = async (req: Request, res: Response) => {
         }
         // Provide a more specific error message if possible
         if (error.code === '28P01') { // PostgreSQL authentication error
-            return res.status(400).json({ message: 'Authentication failed. Please check your username and password.' });
+            return res.status(401).json({ message: 'Authentication failed. Please check your username and password.' });
         }
         if (error.code === '3D000') { // PostgreSQL database does not exist error
-            return res.status(400).json({ message: `Database "${dbName}" does not exist. Please create it first.` });
+            return res.status(404).json({ message: `Database "${dbName}" does not exist. Please create it first.` });
         }
         return res.status(500).json({ message: 'Failed to connect to or initialize the database. Please check your credentials and ensure the database exists.' });
 
