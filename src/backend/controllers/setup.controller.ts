@@ -10,9 +10,9 @@ export const setup = async (req: Request, res: Response) => {
     const { adminPin, dbType, dbHost, dbPort, dbUser, dbPassword, dbName } = req.body;
 
     // Basic validation
-    if (!adminPin || typeof adminPin !== 'string' || !/^\d{4}$/.test(adminPin)) {
+    if (!adminPin || typeof adminPin !== 'string' || adminPin.length < 4) {
         console.log('Validation failed: Invalid PIN');
-        return res.status(400).json({ message: 'A 4-digit PIN is required.' });
+        return res.status(400).json({ message: 'A PIN of at least 4 digits is required.' });
     }
     if (!dbType || !dbHost || !dbPort || !dbUser || !dbPassword || !dbName) {
         console.log('Validation failed: Missing database fields');
@@ -100,7 +100,7 @@ export const setup = async (req: Request, res: Response) => {
         if (error.code === 'ECONNREFUSED') {
             return res.status(400).json({ message: `Connection refused on port ${dbPort}. Please check the port number.` });
         }
-        return res.status(500).json({ message: 'Failed to connect to the external database. Please check your credentials and network connection.' });
+        return res.status(500).json({ message: error.message || 'An unexpected error occurred during setup.' });
     }
 };
 

@@ -20,7 +20,19 @@ const Setup: React.FC = () => {
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const handleNext = () => {
+    const [confirmPin, setConfirmPin] = useState('');
+    const [pinError, setPinError] = useState('');
+
+    const handlePinNext = () => {
+        if (adminPin.length < 4) {
+            setPinError('PIN must be at least 4 digits.');
+            return;
+        }
+        if (adminPin !== confirmPin) {
+            setPinError('PINs do not match.');
+            return;
+        }
+        setPinError('');
         setStep(step + 1);
     };
 
@@ -47,7 +59,7 @@ const Setup: React.FC = () => {
 
             if (response.status === 201) {
                 console.log('Setup successful, navigating to next step.');
-                handleNext();
+                setStep(step + 1);
             } else {
                 console.error('API call was not successful, but did not throw an error.', response);
                 setError(response.data.message || 'An unexpected error occurred.');
@@ -98,8 +110,15 @@ const Setup: React.FC = () => {
             </div>
             {error && <p className="error-message">{error}</p>}
             <div className="setup-step">
-                {step === 1 && <Pin adminPin={adminPin} setAdminPin={setAdminPin} onNext={handleNext} />}
-                {step === 2 && <ExternalTool dbType={dbType} setDbType={setDbType} onNext={handleNext} onBack={handleBack} />}
+                {step === 1 && <Pin
+    adminPin={adminPin}
+    setAdminPin={setAdminPin}
+    confirmPin={confirmPin}
+    setConfirmPin={setConfirmPin}
+    onNext={handlePinNext}
+    error={pinError}
+/>}
+                {step === 2 && <ExternalTool dbType={dbType} setDbType={setDbType} onNext={() => setStep(step + 1)} onBack={handleBack} />}
                 {step === 3 && (
                     <Database
                         dbHost={dbHost}
