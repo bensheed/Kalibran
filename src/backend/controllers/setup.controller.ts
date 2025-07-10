@@ -34,10 +34,10 @@ export const setup = async (req: Request, res: Response) => {
     try {
         // 1. Test External DB Connection
         console.log('Connecting to external database to test connection...');
-        const pool = new sql.ConnectionPool(dbConfig);
-        const poolConnection = await pool.connect();
+        const sqlPool = new sql.ConnectionPool(dbConfig);
+        const sqlConnection = await sqlPool.connect();
         console.log('External database connection successful.');
-        poolConnection.close();
+        sqlConnection.close();
 
         // 2. Connect to Internal DB and Save Settings
         const client = await pool.connect();
