@@ -55,22 +55,23 @@ export const setup = async (req: Request, res: Response) => {
             const salt = await bcrypt.genSalt(10);
             const hashedPin = await bcrypt.hash(adminPin, salt);
             await client.query(
-                "INSERT INTO settings (setting_key, setting_value) VALUES ('admin_pin', $1)",
-                [hashedPin]
+                "INSERT INTO settings (setting_key, setting_value) VALUES ($1, $2)",
+                ['admin_pin', hashedPin]
             );
 
             await client.query(
-                "INSERT INTO settings (setting_key, setting_value) VALUES ('external_db_type', $1)",
-                [dbType]
+                "INSERT INTO settings (setting_key, setting_value) VALUES ($1, $2)",
+                ['external_db_type', dbType]
             );
 
             await client.query(
-                "INSERT INTO settings (setting_key, setting_value) VALUES ('external_db_config', $1)",
-                [JSON.stringify(dbConfig)]
+                "INSERT INTO settings (setting_key, setting_value) VALUES ($1, $2)",
+                ['external_db_config', JSON.stringify(dbConfig)]
             );
 
             await client.query(
-                "INSERT INTO settings (setting_key, setting_value) VALUES ('setup_complete', 'true')"
+                "INSERT INTO settings (setting_key, setting_value) VALUES ($1, $2)",
+                ['setup_complete', 'true']
             );
 
             await client.query('COMMIT');
@@ -83,7 +84,9 @@ export const setup = async (req: Request, res: Response) => {
             await client.query('ROLLBACK');
             throw error; // Re-throw to be caught by the outer catch block
         } finally {
-            client.release();
+            if (client) {
+                client.release();
+            }
         }
 
     } catch (error: any) {
@@ -116,7 +119,9 @@ export const resetSetup = async (req: Request, res: Response) => {
             await client.query('ROLLBACK');
             throw error;
         } finally {
-            client.release();
+            if (client) {
+                client.release();
+            }
         }
     } catch (error) {
         console.error('Failed to reset setup:', error);
