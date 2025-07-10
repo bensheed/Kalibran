@@ -67,11 +67,16 @@ const checkSetup = async (req: express.Request, res: express.Response, next: exp
     }
 };
 
-// Apply the setup check to all API routes
-app.use('/api', checkSetup as express.RequestHandler);
+// Apply the setup check to all API routes that need it
+app.use('/api', (req, res, next) => {
+    if (req.path.startsWith('/setup')) {
+        return next();
+    }
+    checkSetup(req, res, next);
+});
 
 // Routes
-app.use('/api', setupRoutes);
+app.use('/api/setup', setupRoutes);
 app.use('/api', syncRoutes);
 app.use('/api', boardRoutes);
 app.use('/api', columnRoutes);
