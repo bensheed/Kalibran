@@ -114,6 +114,7 @@ const Setup: React.FC = () => {
                         setDbName={setDbName}
                         onNext={handleDbSubmit}
                         onBack={handleBack}
+                        loading={loading}
                     />
                 )}
                 {step === 4 && <DataSync onBack={handleBack} onSubmit={handleFinalSubmit} loading={loading} />}
