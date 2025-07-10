@@ -25,6 +25,6 @@ COPY --from=backend-builder /app/dist ./dist
 COPY --from=frontend-builder /app/frontend/build ./src/frontend/build
 COPY database ./database
 EXPOSE 3001
-CMD ["node", "dist/backend/index.js"]
+CMD ["node", "dist/index.js"]
 
 
