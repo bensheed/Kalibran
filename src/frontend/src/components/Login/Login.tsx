@@ -11,15 +11,28 @@ const Login: React.FC = () => {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
+        console.log('--- Login Attempt (Frontend) ---');
+        console.log('PIN entered:', pin);
+
         try {
-            await api.post('/login', { pin });
-            login(); // Update the auth state. App.tsx will handle the navigation.
-        } catch (err: any) {
-            if (err.response && err.response.status === 401) {
-                setError('Invalid PIN. Please try again.');
+            console.log('Sending login request to backend...');
+            const response = await api.post('/login', { pin });
+            console.log('Backend response received:', response);
+
+            if (response.status === 200 && response.data.token) {
+                console.log('Login successful on frontend. Calling login() from auth store.');
+                login(); // Update the auth state. App.tsx will handle the navigation.
             } else {
-                setError('An unexpected error occurred. Please try again later.');
-                console.error(err);
+                console.warn('Login response was not successful or did not contain a token.', response);
+                setError('Login failed. Please check the console for details.');
+            }
+        } catch (err: any) {
+            console.error('--- CRITICAL ERROR during frontend login ---', err);
+            if (err.response) {
+                console.error('Error response from backend:', err.response);
+                setError(`Login failed: ${err.response.data.message || 'Please try again.'}`);
+            } else {
+                setError('An unexpected network error occurred.');
             }
         }
     };
