@@ -5,6 +5,7 @@ import Login from './components/Login/Login';
 import Board from './components/Board/Board';
 import Settings from './components/Settings/Settings';
 import Setup from './components/Setup/Setup';
+import CreateBoard from './components/CreateBoard/CreateBoard';
 import api from './services/api';
 
 function App() {
@@ -51,6 +52,7 @@ function App() {
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path="/setup" element={<Setup />} />
+      <Route path="/create-board" element={isAuthenticated ? <CreateBoard /> : <Login />} />
       <Route path="/settings" element={isAuthenticated ? <Settings /> : <Login />} />
       <Route path="/board/:boardId" element={isAuthenticated ? <Board /> : <Login />} />
       <Route path="/" element={isAuthenticated ? <Board /> : <Login />} />

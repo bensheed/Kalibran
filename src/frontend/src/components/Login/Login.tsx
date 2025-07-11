@@ -1,20 +1,35 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import './Login.css';
 
 const Login: React.FC = () => {
     const [pin, setPin] = useState('');
     const [error, setError] = useState('');
+    const navigate = useNavigate();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
+        setError('');
         try {
-            const response = await api.post('/login', { pin });
-            // Assuming the API returns a token, which you would then store.
-            // For now, we'll just reload the page to reflect the logged-in state.
-            window.location.reload();
-        } catch (err) {
-            setError('Invalid PIN');
+            await api.post('/login', { pin });
+            
+            // After successful login, check for existing boards
+            const boardsResponse = await api.get('/boards');
+            if (boardsResponse.data && boardsResponse.data.length > 0) {
+                // Redirect to the first board
+                navigate(`/board/${boardsResponse.data[0].id}`);
+            } else {
+                // Redirect to a page to create the first board
+                navigate('/create-board');
+            }
+        } catch (err: any) {
+            if (err.response && err.response.status === 401) {
+                setError('Invalid PIN. Please try again.');
+            } else {
+                setError('An unexpected error occurred. Please try again later.');
+                console.error(err);
+            }
         }
     };
 
