@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import api from '../../services/api';
+import './Login.css';
 
 const Login: React.FC = () => {
     const [pin, setPin] = useState('');
@@ -18,17 +19,18 @@ const Login: React.FC = () => {
     };
 
     return (
-        <div>
-            <h2>Login</h2>
-            <form onSubmit={handleLogin}>
+        <div className="login-container">
+            <form className="login-form" onSubmit={handleLogin}>
+                <h2>Admin Login</h2>
                 <input
                     type="password"
                     value={pin}
                     onChange={(e) => setPin(e.target.value)}
                     placeholder="Enter PIN"
+                    className="login-input"
                 />
-                <button type="submit">Login</button>
-                {error && <p style={{ color: 'red' }}>{error}</p>}
+                <button type="submit" className="login-button">Login</button>
+                {error && <p className="login-error">{error}</p>}
             </form>
         </div>
     );

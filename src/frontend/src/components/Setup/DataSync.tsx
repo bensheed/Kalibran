@@ -16,8 +16,8 @@ const DataSync: React.FC<DataSyncProps> = ({ onBack, onSubmit, loading }) => {
   // Mock data for now
   const mockTables = ['Calibrations', 'Instruments'];
   const mockColumns = {
-    Calibrations: ['Job_no', 'Inst_ID', 'Cal_date'],
-    Instruments: ['Inst_ID', 'Description', 'Manufacturer'],
+    Calibrations: ['Job_no', 'Inst_ID', 'Cal_date', 'Service_Required', 'Calibration_Required', 'Quote_Status', 'Fast_Turnaround', 'Rec_Date', 'Order_No'],
+    Instruments: ['Inst_ID', 'Description', 'Manufacturer', 'Model_no', 'Serial_no', 'Status', 'Cust_Name'],
   };
 
   console.log('Rendering DataSync component');
