@@ -45,9 +45,9 @@ const checkSetup = async (req: express.Request, res: express.Response, next: exp
     }
 
     try {
-        const result = await pool.query("SELECT setting_value FROM settings WHERE setting_key = 'admin_pin'");
-        if (result.rows.length === 0 || !result.rows[0].setting_value) {
-            // No admin PIN is set, so the application is not set up.
+        const result = await pool.query("SELECT setting_value FROM settings WHERE setting_key = 'setup_complete'");
+        if (result.rows.length === 0 || result.rows[0].setting_value !== 'true') {
+            // The application is not set up.
             return res.status(409).json({
                 setupRequired: true,
                 message: 'Application not configured. Please complete the setup process.',
@@ -67,13 +67,8 @@ const checkSetup = async (req: express.Request, res: express.Response, next: exp
     }
 };
 
-// Apply the setup check to all API routes that need it
-app.use('/api', (req, res, next) => {
-    if (req.path.startsWith('/setup')) {
-        return next();
-    }
-    checkSetup(req, res, next);
-});
+// Apply the setup check to all API routes
+app.use('/api', checkSetup);
 
 // Routes
 app.use('/api/setup', setupRoutes);

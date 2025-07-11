@@ -1,18 +1,21 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
+import { useAuthStore } from '../../store/authStore';
 import './Login.css';
 
 const Login: React.FC = () => {
     const [pin, setPin] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { login } = useAuthStore();
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
         try {
             await api.post('/login', { pin });
+            login(); // Update the auth state
             
             // After successful login, check for existing boards
             const boardsResponse = await api.get('/boards');
