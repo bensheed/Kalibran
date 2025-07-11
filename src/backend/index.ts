@@ -42,9 +42,9 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, '../src/frontend/build')));
 
 // Setup check middleware
-const checkSetup = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+const checkSetup: express.RequestHandler = async (req, res, next) => {
     // Exclude setup routes from this check
-    if (req.path.startsWith('/api/setup')) {
+    if (req.path.startsWith('/setup')) {
         return next();
     }
 
@@ -52,22 +52,24 @@ const checkSetup = async (req: express.Request, res: express.Response, next: exp
         const result = await pool.query("SELECT setting_value FROM settings WHERE setting_key = 'setup_complete'");
         if (result.rows.length === 0 || result.rows[0].setting_value !== 'true') {
             // The application is not set up.
-            return res.status(409).json({
+            res.status(409).json({
                 setupRequired: true,
                 message: 'Application not configured. Please complete the setup process.',
             });
+            return;
         }
         next();
     } catch (error) {
         // This could happen if the 'settings' table doesn't exist yet.
         if (error instanceof Error && 'code' in error && error.code === '42P01') { // '42P01' is undefined_table
-            return res.status(409).json({
+            res.status(409).json({
                 setupRequired: true,
                 message: 'Database not initialized. Please run the setup.',
             });
+            return;
         }
         console.error('Error checking setup status:', error);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 };
 
@@ -81,9 +83,7 @@ app.use('/api', boardRoutes);
 app.use('/api', columnRoutes);
 app.use('/api', cardRoutes);
 app.use('/api', settingsRoutes);
-app.post('/api/login', (req, res, next) => {
-    authenticate(req, res, next);
-});
+app.post('/api/login', authenticate);
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
