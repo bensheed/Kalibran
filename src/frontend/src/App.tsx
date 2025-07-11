@@ -10,72 +10,51 @@ import api from './services/api';
 
 function App() {
   const { isAuthenticated } = useAuthStore();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [initialRoute, setInitialRoute] = useState<string | null>(null);
 
   useEffect(() => {
-    const checkStatus = async () => {
-        try {
-            // A simple API call to check the server status
-            await api.get('/settings'); 
-        } catch (error: any) {
-            console.error("Failed to check server status:", error);
-            if (error.response) {
-                console.error("Error response:", error.response);
-                if (error.response.status === 409) {
-                    navigate('/setup');
-                }
-            } else {
-                console.error("The error object does not have a 'response' property.");
-            }
-        } finally {
-            setLoading(false);
+    const checkStatusAndRedirect = async () => {
+      try {
+        await api.get('/settings');
+        const boardsResponse = await api.get('/boards');
+        if (boardsResponse.data && boardsResponse.data.length > 0) {
+          setInitialRoute(`/board/${boardsResponse.data[0].id}`);
+        } else {
+          setInitialRoute('/create-board');
         }
-    };
-    checkStatus();
-}, [navigate]);
-
-  useEffect(() => {
-    const handleAuthChange = async () => {
-      if (isAuthenticated) {
-        try {
-          const boardsResponse = await api.get('/boards');
-          if (boardsResponse.data && boardsResponse.data.length > 0) {
-            navigate(`/board/${boardsResponse.data[0].id}`);
-          } else {
-            navigate('/create-board');
-          }
-        } catch (error) {
-          console.error("Failed to fetch boards after login:", error);
-          // Optional: handle error, e.g., navigate to an error page
+      } catch (error: any) {
+        if (error.response && error.response.status === 409) {
+          setInitialRoute('/setup');
+        } else {
+          setInitialRoute('/login');
         }
+      } finally {
+        setLoading(false);
       }
     };
-    handleAuthChange();
-  }, [isAuthenticated, navigate]);
+
+    if (!isAuthenticated) {
+      checkStatusAndRedirect();
+    }
+  }, [isAuthenticated]);
 
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
-    <Routes>
-      <Route path="/login" element={<Login />} />
-      <Route path="/setup" element={<Setup />} />
-      <Route path="/create-board" element={isAuthenticated ? <CreateBoard /> : <Login />} />
-      <Route path="/settings" element={isAuthenticated ? <Settings /> : <Login />} />
-      <Route path="/board/:boardId" element={isAuthenticated ? <Board /> : <Login />} />
-      <Route path="/" element={isAuthenticated ? <Board /> : <Login />} />
-    </Routes>
-  );
-}
-
-function AppWrapper() {
-  return (
     <Router>
-      <App />
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route path="/setup" element={<Setup />} />
+        <Route path="/create-board" element={isAuthenticated ? <CreateBoard /> : <Login />} />
+        <Route path="/settings" element={isAuthenticated ? <Settings /> : <Login />} />
+        <Route path="/board/:boardId" element={isAuthenticated ? <Board /> : <Login />} />
+        <Route path="/" element={isAuthenticated ? <Board /> : <Login />} />
+      </Routes>
     </Router>
   );
 }
 
-export default AppWrapper;
+export default App;
