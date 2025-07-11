@@ -36,12 +36,22 @@ function App() {
 }, [navigate]);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      const lastViewedBoardId = localStorage.getItem('lastViewedBoardId');
-      if (lastViewedBoardId) {
-        navigate(`/board/${lastViewedBoardId}`);
+    const handleAuthChange = async () => {
+      if (isAuthenticated) {
+        try {
+          const boardsResponse = await api.get('/boards');
+          if (boardsResponse.data && boardsResponse.data.length > 0) {
+            navigate(`/board/${boardsResponse.data[0].id}`);
+          } else {
+            navigate('/create-board');
+          }
+        } catch (error) {
+          console.error("Failed to fetch boards after login:", error);
+          // Optional: handle error, e.g., navigate to an error page
+        }
       }
-    }
+    };
+    handleAuthChange();
   }, [isAuthenticated, navigate]);
 
   if (loading) {
