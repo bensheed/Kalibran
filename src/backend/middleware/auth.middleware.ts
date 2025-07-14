@@ -51,16 +51,35 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 };
 
 export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
-    const token = req.headers.authorization?.split(' ')[1];
-
-    if (!token || !activeSessions[token]) {
+    const authHeader = req.headers.authorization;
+    console.log('Auth middleware - Authorization header:', authHeader ? `${authHeader.substring(0, 15)}...` : 'Missing');
+    
+    const token = authHeader?.split(' ')[1];
+    
+    console.log('Auth middleware - Checking token:', token ? `${token.substring(0, 10)}...` : 'No token');
+    console.log('Auth middleware - Active sessions:', Object.keys(activeSessions).length);
+    console.log('Auth middleware - Active session IDs:', Object.keys(activeSessions));
+    
+    if (!token) {
+        console.log('Auth middleware - No token provided in request');
+        return res.status(401).json({ message: 'Unauthorized: No token provided.' });
+    }
+    
+    if (!activeSessions[token]) {
+        console.log('Auth middleware - Token not found in active sessions');
+        console.log('Auth middleware - Received token:', token);
+        console.log('Auth middleware - Available tokens:', Object.keys(activeSessions));
         return res.status(401).json({ message: 'Unauthorized: No active session.' });
     }
 
     const session = activeSessions[token];
+    console.log('Auth middleware - Session found:', session);
+    
     if (session.role !== 'admin') {
+        console.log('Auth middleware - User is not an admin');
         return res.status(403).json({ message: 'Forbidden: Admin access required.' });
     }
 
+    console.log('Auth middleware - Authorization successful');
     next();
 };

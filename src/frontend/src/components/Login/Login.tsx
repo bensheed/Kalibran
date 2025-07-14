@@ -18,25 +18,47 @@ const Login: React.FC = () => {
 
         try {
             console.log('Sending login request to backend...');
-            const response = await api.post('/api/login', { pin });
+            console.log('API URL:', api.defaults.baseURL);
+            
+            const response = await api.post('/login', { pin });
             console.log('Backend response received:', response);
 
             if (response.status === 200 && response.data.token) {
-                console.log('Login successful on frontend. Calling login() from auth store.');
-                // Set the session cookie
-                document.cookie = `session_id=${response.data.token}; path=/`;
-                login(); // Update the auth state
+                console.log('Login successful on frontend. Calling login() from auth store with token:', response.data.token);
+                // The login function will set the cookie
+                login(response.data.token); // Update the auth state with token
+                
+                console.log('Auth state after login:', useAuthStore.getState().isAuthenticated ? 'Authenticated' : 'Not authenticated');
+                console.log('Token stored:', useAuthStore.getState().token);
+                console.log('Navigating to /create-board');
+                
                 navigate('/create-board'); // Navigate to create-board
+                
+                // Add a delay and check if navigation worked
+                setTimeout(() => {
+                    console.log('Current location after navigation:', window.location.pathname);
+                    if (window.location.pathname !== '/create-board') {
+                        console.error('Navigation may have failed. Still at:', window.location.pathname);
+                    }
+                }, 500);
             } else {
                 console.warn('Login response was not successful or did not contain a token.', response);
                 setError('Login failed. Please check the console for details.');
             }
         } catch (err: any) {
             console.error('--- CRITICAL ERROR during frontend login ---', err);
-            if (err.response && err.response.data && err.response.data.message) {
-                setError(err.response.data.message);
+            console.error('Error object:', err);
+            
+            if (err.response) {
+                console.error('Error response:', err.response.data);
+                console.error('Status code:', err.response.status);
+                setError(`Error (${err.response.status}): ${err.response.data?.message || 'An error occurred'}`);
+            } else if (err.request) {
+                console.error('No response received:', err.request);
+                setError('No response from server. Please check your connection.');
             } else {
-                setError('Invalid PIN. Please try again.');
+                console.error('Error message:', err.message);
+                setError(`Error: ${err.message}`);
             }
         }
     };

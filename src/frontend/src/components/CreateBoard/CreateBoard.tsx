@@ -1,12 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
+import { useAuthStore } from '../../store/authStore';
 import './CreateBoard.css';
 
 const CreateBoard: React.FC = () => {
     const [boardName, setBoardName] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const { isAuthenticated, token } = useAuthStore();
+    
+    useEffect(() => {
+        console.log('CreateBoard component mounted');
+        console.log('Auth state in CreateBoard:', isAuthenticated ? 'Authenticated' : 'Not authenticated');
+        console.log('Token in CreateBoard:', token ? `${token.substring(0, 5)}...` : 'No token');
+        
+        // Check if user is authenticated
+        if (!isAuthenticated) {
+            console.error('User is not authenticated in CreateBoard component');
+            navigate('/login');
+        }
+    }, [isAuthenticated, token, navigate]);
 
     const handleCreateBoard = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -16,15 +30,50 @@ const CreateBoard: React.FC = () => {
             return;
         }
         try {
-            const response = await api.post('/boards', { name: boardName });
+            console.log('Attempting to create board with name:', boardName);
+            console.log('Auth state:', useAuthStore.getState().isAuthenticated ? 'Authenticated' : 'Not authenticated');
+            console.log('Token for board creation:', useAuthStore.getState().token);
+            
+            // Get the token directly from the store
+            const currentToken = useAuthStore.getState().token;
+            console.log('Token for board creation (raw):', currentToken);
+            
+            // Manually set the Authorization header for this specific request
+            const response = await api.post('/boards', 
+                { name: boardName },
+                { 
+                    headers: { 
+                        'Authorization': `Bearer ${currentToken}` 
+                    } 
+                }
+            );
+            
+            console.log('Request headers sent:', {
+                'Authorization': `Bearer ${currentToken}`
+            });
+            
+            console.log('Create board response:', response);
+            
             if (response.data && response.data.id) {
+                console.log('Board created successfully, navigating to:', `/board/${response.data.id}`);
                 navigate(`/board/${response.data.id}`);
             } else {
+                console.error('Board creation response did not contain an ID:', response.data);
                 setError('Failed to create board. Please try again.');
             }
-        } catch (err) {
-            setError('An error occurred while creating the board.');
-            console.error(err);
+        } catch (err: any) {
+            console.error('Error creating board:', err);
+            if (err.response) {
+                console.error('Error response:', err.response.data);
+                console.error('Status code:', err.response.status);
+                setError(`Error (${err.response.status}): ${err.response.data.message || 'An error occurred'}`);
+            } else if (err.request) {
+                console.error('No response received:', err.request);
+                setError('No response from server. Please check your connection.');
+            } else {
+                console.error('Error message:', err.message);
+                setError(`Error: ${err.message}`);
+            }
         }
     };
 
