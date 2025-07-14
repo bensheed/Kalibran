@@ -86,8 +86,9 @@ app.use('/api', boardRoutes);
 app.use('/api', columnRoutes);
 app.use('/api', cardRoutes);
 app.use('/api', settingsRoutes);
-// Use the auth routes
+// Use the auth routes - make it available at both /login and /api/login
 app.use('/login', authRoutes);
+app.use('/api/login', authRoutes);
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.

@@ -19,40 +19,43 @@ const Login: React.FC = () => {
         try {
             console.log('Sending login request to backend...');
             
-            // Use fetch directly instead of axios
-            const response = await fetch('http://localhost:3001/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ pin }),
-                credentials: 'include'
-            });
+            // Use the API instance
+            const response = await api.post('/api/login', { pin });
             
             console.log('Response status:', response.status);
+            console.log('Response data:', response.data);
             
-            if (response.ok) {
-                const data = await response.json();
-                console.log('Login successful on frontend with token:', data.token);
-                
-                // The login function will set the cookie
-                login(data.token); // Update the auth state with token
-                
-                console.log('Auth state after login:', useAuthStore.getState().isAuthenticated ? 'Authenticated' : 'Not authenticated');
-                console.log('Token stored:', useAuthStore.getState().token);
-                
-                // Use React Router for navigation
-                console.log('Navigating to /create-board');
-                navigate('/create-board');
-            } else {
-                const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
-                console.warn('Login response was not successful:', errorData);
-                setError(`Error (${response.status}): ${errorData.message || 'An error occurred'}`);
-            }
+            // With axios, successful responses come here
+            console.log('Login successful on frontend with token:', response.data.token);
+            
+            // The login function will set the cookie
+            login(response.data.token); // Update the auth state with token
+            
+            console.log('Auth state after login:', useAuthStore.getState().isAuthenticated ? 'Authenticated' : 'Not authenticated');
+            console.log('Token stored:', useAuthStore.getState().token);
+            
+            // Use React Router for navigation
+            console.log('Navigating to /create-board');
+            navigate('/create-board');
         } catch (err: any) {
             console.error('--- CRITICAL ERROR during frontend login ---', err);
             console.error('Error object:', err);
-            setError(`Error: ${err.message || 'Unknown error'}`);
+            
+            if (err.response) {
+                // The request was made and the server responded with a status code
+                // that falls out of the range of 2xx
+                console.error('Error response data:', err.response.data);
+                console.error('Error response status:', err.response.status);
+                setError(`Error (${err.response.status}): ${err.response.data.message || 'An error occurred'}`);
+            } else if (err.request) {
+                // The request was made but no response was received
+                console.error('No response received:', err.request);
+                setError('No response from server. Please check your connection.');
+            } else {
+                // Something happened in setting up the request that triggered an Error
+                console.error('Error message:', err.message);
+                setError(`Error: ${err.message || 'Unknown error'}`);
+            }
         }
     };
 
