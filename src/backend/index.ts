@@ -32,9 +32,10 @@ io.on('connection', (socket) => {
 
 // Middleware
 app.use(cors({
-    origin: 'http://localhost:3000', // Allow requests from the local frontend
+    origin: ['http://localhost:3000', 'http://localhost:54968'], // Allow requests from the local frontend
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
 }));
 app.use(express.json());
 

@@ -16,21 +16,9 @@ const Login: React.FC = () => {
         console.log('--- Login Attempt (Frontend) ---');
         console.log('PIN entered:', pin);
 
-        // For testing purposes, if PIN is 1234, simulate successful login
-        if (pin === '1234') {
-            console.log('Test PIN accepted, simulating successful login');
-            // Set a cookie to simulate a session
-            document.cookie = `session_id=test_session_${Date.now()}; path=/`;
-            // Update auth state
-            login();
-            // Navigate to create-board
-            navigate('/create-board');
-            return;
-        }
-
         try {
             console.log('Sending login request to backend...');
-            const response = await api.post('/login', { pin });
+            const response = await api.post('/api/login', { pin });
             console.log('Backend response received:', response);
 
             if (response.status === 200 && response.data.token) {
@@ -45,7 +33,11 @@ const Login: React.FC = () => {
             }
         } catch (err: any) {
             console.error('--- CRITICAL ERROR during frontend login ---', err);
-            setError('Invalid PIN. Please try again.');
+            if (err.response && err.response.data && err.response.data.message) {
+                setError(err.response.data.message);
+            } else {
+                setError('Invalid PIN. Please try again.');
+            }
         }
     };
 
