@@ -10,6 +10,7 @@ import boardRoutes from './routes/boards.routes';
 import columnRoutes from './routes/columns.routes';
 import cardRoutes from './routes/cards.routes';
 import settingsRoutes from './routes/settings.routes';
+import authRoutes from './routes/auth.routes';
 import { authenticate } from './middleware/auth.middleware';
 
 const app = express();
@@ -41,7 +42,7 @@ app.use(require('cookie-parser')());
 app.use(express.json());
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../src/frontend/build')));
+app.use(express.static(path.join(__dirname, '../../frontend/build')));
 
 // Setup check middleware
 const checkSetup: express.RequestHandler = async (req, res, next) => {
@@ -85,21 +86,13 @@ app.use('/api', boardRoutes);
 app.use('/api', columnRoutes);
 app.use('/api', cardRoutes);
 app.use('/api', settingsRoutes);
-// Define the login route
-app.post('/login', async (req, res, next) => {
-  console.log('Login route hit with body:', req.body);
-  try {
-    await authenticate(req, res, next);
-  } catch (error) {
-    console.error('Error in login route:', error);
-    res.status(500).json({ message: 'Internal server error during login' });
-  }
-});
+// Use the auth routes
+app.use('/login', authRoutes);
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../src/frontend/build/index.html'));
+  res.sendFile(path.join(__dirname, '../../frontend/build/index.html'));
 });
 
 server.listen(port, () => {

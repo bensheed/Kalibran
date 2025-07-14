@@ -18,47 +18,41 @@ const Login: React.FC = () => {
 
         try {
             console.log('Sending login request to backend...');
-            console.log('API URL:', api.defaults.baseURL);
             
-            console.log('Using API URL:', api.defaults.baseURL);
-            const response = await api.post('/login', { pin }, {
+            // Use fetch directly instead of axios
+            const response = await fetch('http://localhost:3001/login', {
+                method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
-                }
+                },
+                body: JSON.stringify({ pin }),
+                credentials: 'include'
             });
-            console.log('Backend response received:', response);
-
-            if (response.status === 200 && response.data.token) {
-                console.log('Login successful on frontend. Calling login() from auth store with token:', response.data.token);
+            
+            console.log('Response status:', response.status);
+            
+            if (response.ok) {
+                const data = await response.json();
+                console.log('Login successful on frontend with token:', data.token);
+                
                 // The login function will set the cookie
-                login(response.data.token); // Update the auth state with token
+                login(data.token); // Update the auth state with token
                 
                 console.log('Auth state after login:', useAuthStore.getState().isAuthenticated ? 'Authenticated' : 'Not authenticated');
                 console.log('Token stored:', useAuthStore.getState().token);
-                console.log('Navigating to /create-board');
                 
-                // Force a hard redirect instead of using React Router
-                console.log('Forcing hard redirect to /create-board');
-                window.location.href = '/create-board';
+                // Use React Router for navigation
+                console.log('Navigating to /create-board');
+                navigate('/create-board');
             } else {
-                console.warn('Login response was not successful or did not contain a token.', response);
-                setError('Login failed. Please check the console for details.');
+                const errorData = await response.json().catch(() => ({ message: 'Unknown error' }));
+                console.warn('Login response was not successful:', errorData);
+                setError(`Error (${response.status}): ${errorData.message || 'An error occurred'}`);
             }
         } catch (err: any) {
             console.error('--- CRITICAL ERROR during frontend login ---', err);
             console.error('Error object:', err);
-            
-            if (err.response) {
-                console.error('Error response:', err.response.data);
-                console.error('Status code:', err.response.status);
-                setError(`Error (${err.response.status}): ${err.response.data?.message || 'An error occurred'}`);
-            } else if (err.request) {
-                console.error('No response received:', err.request);
-                setError('No response from server. Please check your connection.');
-            } else {
-                console.error('Error message:', err.message);
-                setError(`Error: ${err.message}`);
-            }
+            setError(`Error: ${err.message || 'Unknown error'}`);
         }
     };
 
