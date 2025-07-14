@@ -37,6 +37,7 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
 }));
+app.use(require('cookie-parser')());
 app.use(express.json());
 
 // Serve static files from the React app
