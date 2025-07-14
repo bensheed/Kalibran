@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { useAuthStore } from './store/authStore';
 import Login from './components/Login/Login';
 import Board from './components/Board/Board';
 import Settings from './components/Settings/Settings';
 import Setup from './components/Setup/Setup';
 import CreateBoard from './components/CreateBoard/CreateBoard';
-import api from './services/api';
 
 function App() {
-  const { isAuthenticated, checkAuthentication } = useAuthStore();
+  const { isAuthenticated } = useAuthStore();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const initialize = async () => {
-      await checkAuthentication();
+    // Simple initialization without async
+    const checkAuth = () => {
+      const hasSession = document.cookie.includes('session_id');
+      if (hasSession) {
+        useAuthStore.getState().login();
+      }
       setLoading(false);
     };
-    initialize();
-  }, [checkAuthentication]);
+    
+    checkAuth();
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;

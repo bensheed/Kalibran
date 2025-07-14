@@ -4,7 +4,6 @@ interface AuthState {
     isAuthenticated: boolean;
     login: () => void;
     logout: () => void;
-    checkAuthentication: () => void;
 }
 
 export const useAuthStore = create<AuthState>((set) => ({
@@ -15,9 +14,5 @@ export const useAuthStore = create<AuthState>((set) => ({
     logout: () => {
         document.cookie = 'session_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         set({ isAuthenticated: false });
-    },
-    checkAuthentication: () => {
-        const isAuthenticated = document.cookie.includes('session_id');
-        set({ isAuthenticated });
-    },
+    }
 }));
