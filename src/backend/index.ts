@@ -32,7 +32,7 @@ io.on('connection', (socket) => {
 
 // Middleware
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:54968'], // Allow requests from the local frontend
+    origin: ['http://localhost:3000', 'http://localhost:54968', 'http://localhost:54969'], // Allow requests from the local frontend
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
@@ -85,8 +85,14 @@ app.use('/api', columnRoutes);
 app.use('/api', cardRoutes);
 app.use('/api', settingsRoutes);
 // Define the login route
-app.post('/api/login', function(req, res, next) {
-  authenticate(req, res, next);
+app.post('/login', async (req, res, next) => {
+  console.log('Login route hit with body:', req.body);
+  try {
+    await authenticate(req, res, next);
+  } catch (error) {
+    console.error('Error in login route:', error);
+    res.status(500).json({ message: 'Internal server error during login' });
+  }
 });
 
 // The "catchall" handler: for any request that doesn't

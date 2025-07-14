@@ -20,7 +20,12 @@ const Login: React.FC = () => {
             console.log('Sending login request to backend...');
             console.log('API URL:', api.defaults.baseURL);
             
-            const response = await api.post('/login', { pin });
+            console.log('Using API URL:', api.defaults.baseURL);
+            const response = await api.post('/login', { pin }, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
             console.log('Backend response received:', response);
 
             if (response.status === 200 && response.data.token) {
@@ -32,15 +37,9 @@ const Login: React.FC = () => {
                 console.log('Token stored:', useAuthStore.getState().token);
                 console.log('Navigating to /create-board');
                 
-                navigate('/create-board'); // Navigate to create-board
-                
-                // Add a delay and check if navigation worked
-                setTimeout(() => {
-                    console.log('Current location after navigation:', window.location.pathname);
-                    if (window.location.pathname !== '/create-board') {
-                        console.error('Navigation may have failed. Still at:', window.location.pathname);
-                    }
-                }, 500);
+                // Force a hard redirect instead of using React Router
+                console.log('Forcing hard redirect to /create-board');
+                window.location.href = '/create-board';
             } else {
                 console.warn('Login response was not successful or did not contain a token.', response);
                 setError('Login failed. Please check the console for details.');

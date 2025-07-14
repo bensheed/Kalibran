@@ -18,7 +18,24 @@ const CreateBoard: React.FC = () => {
         // Check if user is authenticated
         if (!isAuthenticated) {
             console.error('User is not authenticated in CreateBoard component');
-            navigate('/login');
+            
+            // Check if we have a token in cookies before redirecting
+            const cookies = document.cookie.split(';');
+            let hasSessionCookie = false;
+            for (const cookie of cookies) {
+                const [name, value] = cookie.trim().split('=');
+                if (name === 'session_id' && value) {
+                    console.log('Found session cookie, logging in with it');
+                    useAuthStore.getState().login(value);
+                    hasSessionCookie = true;
+                    break;
+                }
+            }
+            
+            if (!hasSessionCookie) {
+                console.log('No session cookie found, redirecting to login');
+                navigate('/login');
+            }
         }
     }, [isAuthenticated, token, navigate]);
 
