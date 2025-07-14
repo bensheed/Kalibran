@@ -38,12 +38,32 @@ const CreateBoard: React.FC = () => {
             const currentToken = useAuthStore.getState().token;
             console.log('Token for board creation (raw):', currentToken);
             
+            // Get token from cookie as fallback
+            let tokenToUse = currentToken;
+            if (!tokenToUse) {
+                const cookies = document.cookie.split(';');
+                for (const cookie of cookies) {
+                    const [name, value] = cookie.trim().split('=');
+                    if (name === 'session_id') {
+                        tokenToUse = value;
+                        console.log('Using token from cookie instead:', tokenToUse);
+                        break;
+                    }
+                }
+            }
+            
+            if (!tokenToUse) {
+                console.error('No authentication token found in store or cookies!');
+                setError('Authentication error: No token found');
+                return;
+            }
+            
             // Manually set the Authorization header for this specific request
             const response = await api.post('/boards', 
                 { name: boardName },
                 { 
                     headers: { 
-                        'Authorization': `Bearer ${currentToken}` 
+                        'Authorization': `Bearer ${tokenToUse}` 
                     } 
                 }
             );
