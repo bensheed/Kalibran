@@ -10,6 +10,7 @@ import boardRoutes from './routes/boards.routes';
 import columnRoutes from './routes/columns.routes';
 import cardRoutes from './routes/cards.routes';
 import settingsRoutes from './routes/settings.routes';
+import authRoutes from './routes/auth.routes';
 import { authenticate } from './middleware/auth.middleware';
 
 const app = express();
@@ -31,60 +32,68 @@ io.on('connection', (socket) => {
 });
 
 // Middleware
-app.use(cors());
+app.use(cors({
+    origin: ['http://localhost:3000', 'http://localhost:54968', 'http://localhost:54969'], // Allow requests from the local frontend
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true
+}));
+app.use(require('cookie-parser')());
 app.use(express.json());
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../frontend/build')));
+app.use(express.static(path.join(__dirname, '../../frontend/build')));
 
 // Setup check middleware
-const checkSetup = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+const checkSetup: express.RequestHandler = async (req, res, next) => {
     // Exclude setup routes from this check
-    if (req.path.startsWith('/api/setup')) {
+    if (req.path.startsWith('/setup')) {
         return next();
     }
 
     try {
-        const result = await pool.query("SELECT setting_value FROM settings WHERE setting_key = 'admin_pin'");
-        if (result.rows.length === 0 || !result.rows[0].setting_value) {
-            // No admin PIN is set, so the application is not set up.
-            return res.status(409).json({
+        const result = await pool.query("SELECT setting_value FROM settings WHERE setting_key = 'setup_complete'");
+        if (result.rows.length === 0 || result.rows[0].setting_value !== 'true') {
+            // The application is not set up.
+            res.status(409).json({
                 setupRequired: true,
                 message: 'Application not configured. Please complete the setup process.',
             });
+            return;
         }
         next();
     } catch (error) {
         // This could happen if the 'settings' table doesn't exist yet.
         if (error instanceof Error && 'code' in error && error.code === '42P01') { // '42P01' is undefined_table
-            return res.status(409).json({
+            res.status(409).json({
                 setupRequired: true,
                 message: 'Database not initialized. Please run the setup.',
             });
+            return;
         }
         console.error('Error checking setup status:', error);
-        return res.status(500).json({ message: 'Internal Server Error' });
+        res.status(500).json({ message: 'Internal Server Error' });
     }
 };
 
 // Apply the setup check to all API routes
-app.use('/api', checkSetup as express.RequestHandler);
+app.use('/api', checkSetup);
 
 // Routes
-app.use('/api', setupRoutes);
+app.use('/api/setup', setupRoutes);
 app.use('/api', syncRoutes);
 app.use('/api', boardRoutes);
 app.use('/api', columnRoutes);
 app.use('/api', cardRoutes);
 app.use('/api', settingsRoutes);
-app.post('/api/login', (req, res, next) => {
-    authenticate(req, res, next);
-});
+// Use the auth routes - make it available at both /login and /api/login
+app.use('/login', authRoutes);
+app.use('/api/login', authRoutes);
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../frontend/build/index.html'));
+  res.sendFile(path.join(__dirname, '../../frontend/build/index.html'));
 });
 
 server.listen(port, () => {

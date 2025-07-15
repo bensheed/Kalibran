@@ -1,8 +1,14 @@
 import React, { useState } from 'react';
 import api from '../../services/api';
 import { useNavigate } from 'react-router-dom';
+import Pin from './Pin';
+import ExternalTool from './ExternalTool';
+import Database from './Database';
+import DataSync from './DataSync';
+import './Setup.css';
 
 const Setup: React.FC = () => {
+    const [step, setStep] = useState(1);
     const [adminPin, setAdminPin] = useState('');
     const [dbType, setDbType] = useState('ProCal');
     const [dbHost, setDbHost] = useState('');
@@ -11,64 +17,127 @@ const Setup: React.FC = () => {
     const [dbPassword, setDbPassword] = useState('');
     const [dbName, setDbName] = useState('');
     const [error, setError] = useState('');
+    const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-        setError('');
+    const [confirmPin, setConfirmPin] = useState('');
+    const [pinError, setPinError] = useState('');
 
-        if (adminPin.length !== 4 || !/^\d{4}$/.test(adminPin)) {
-            setError('Admin PIN must be exactly 4 digits.');
+    const handlePinNext = () => {
+        if (adminPin.length < 4) {
+            setPinError('PIN must be at least 4 digits.');
             return;
         }
+        if (adminPin !== confirmPin) {
+            setPinError('PINs do not match.');
+            return;
+        }
+        setPinError('');
+        setStep(step + 1);
+    };
 
+    const handleBack = () => {
+        setStep(step - 1);
+    };
+
+    const handleDbSubmit = async () => {
+        setError('');
+        setLoading(true);
+        console.log('Submitting database credentials...');
         try {
-            await api.post('/setup', {
+            const response = await api.post('/setup', {
                 adminPin,
-                externalDb: {
-                    type: dbType,
-                    host: dbHost,
-                    port: parseInt(dbPort, 10),
-                    user: dbUser,
-                    password: dbPassword,
-                    database: dbName,
-                },
+                dbType,
+                dbHost,
+                dbPort: parseInt(dbPort, 10),
+                dbUser,
+                dbPassword,
+                dbName,
             });
-            alert('Setup complete! You can now log in.');
-            navigate('/login');
-        } catch (err) {
-            setError('Setup failed. Please check your details and try again.');
+
+            console.log('API Response:', response);
+
+            if (response.status === 201) {
+                console.log('Setup successful, navigating to next step.');
+                setStep(step + 1);
+            } else {
+                console.error('API call was not successful, but did not throw an error.', response);
+                setError(response.data.message || 'An unexpected error occurred.');
+            }
+        } catch (err: any) {
+            console.error('API call failed and threw an error:', err);
+            if (err.response && err.response.data && err.response.data.message) {
+                setError(`Error: ${err.response.data.message}`);
+            } else {
+                setError('An unknown error occurred. Please check the server logs.');
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    const handleFinalSubmit = () => {
+        alert('Setup complete! You can now log in.');
+        navigate('/login');
+    };
+
+    const handleReset = async () => {
+        if (window.confirm('Are you sure you want to reset the setup? This will clear all settings.')) {
+            try {
+                await api.post('/setup/reset');
+                // Reset state to the beginning
+                setStep(1);
+                setAdminPin('');
+                setDbType('ProCal');
+                setDbHost('');
+                setDbPort('');
+                setDbUser('');
+                setDbPassword('');
+                setDbName('');
+                setError('');
+                alert('Setup has been reset. You can now start over.');
+            } catch (err: any) {
+                setError('Failed to reset setup. Please check the server logs.');
+            }
         }
     };
 
     return (
-        <div>
-            <h2>First-Time Setup</h2>
-            <form onSubmit={handleSubmit}>
-                <h4>Admin PIN</h4>
-                <input
-                    type="password"
-                    value={adminPin}
-                    onChange={(e) => setAdminPin(e.target.value)}
-                    placeholder="Enter a 4-digit PIN"
-                    maxLength={4}
-                />
-
-                <h4>External Database Configuration</h4>
-                <select value={dbType} onChange={(e) => setDbType(e.target.value)}>
-                    <option value="ProCal">ProCal</option>
-                    <option value="MetCal" disabled>MetCal (coming soon)</option>
-                    <option value="IndySoft" disabled>IndySoft (coming soon)</option>
-                </select>
-                <input type="text" value={dbHost} onChange={(e) => setDbHost(e.target.value)} placeholder="Host/IP" />
-                <input type="text" value={dbPort} onChange={(e) => setDbPort(e.target.value)} placeholder="Port" />
-                <input type="text" value={dbUser} onChange={(e) => setDbUser(e.target.value)} placeholder="Username" />
-                <input type="password" value={dbPassword} onChange={(e) => setDbPassword(e.target.value)} placeholder="Password" />
-                <input type="text" value={dbName} onChange={(e) => setDbName(e.target.value)} placeholder="Database Name" />
-
-                {error && <p style={{ color: 'red' }}>{error}</p>}
-                <button type="submit">Complete Setup</button>
-            </form>
+        <div className="setup-container">
+            <div className="setup-header">
+                <h2>First-Time Setup</h2>
+                <button onClick={handleReset} className="reset-button">Reset Setup</button>
+            </div>
+            {error && <p className="error-message">{error}</p>}
+            <div className="setup-step">
+                {step === 1 && <Pin
+    adminPin={adminPin}
+    setAdminPin={setAdminPin}
+    confirmPin={confirmPin}
+    setConfirmPin={setConfirmPin}
+    onNext={handlePinNext}
+    error={pinError}
+/>}
+                {step === 2 && <ExternalTool dbType={dbType} setDbType={setDbType} onNext={() => setStep(step + 1)} onBack={handleBack} />}
+                {step === 3 && (
+                    <Database
+                        dbHost={dbHost}
+                        setDbHost={setDbHost}
+                        dbPort={dbPort}
+                        setDbPort={setDbPort}
+                        dbUser={dbUser}
+                        setDbUser={setDbUser}
+                        dbPassword={dbPassword}
+                        setDbPassword={setDbPassword}
+                        dbName={dbName}
+                        setDbName={setDbName}
+                        onNext={handleDbSubmit}
+                        onBack={handleBack}
+                        loading={loading}
+                    />
+                )}
+                {step === 4 && <DataSync onBack={handleBack} onSubmit={handleFinalSubmit} loading={loading} />}
+            </div>
         </div>
     );
 };

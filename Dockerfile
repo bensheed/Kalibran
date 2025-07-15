@@ -9,7 +9,7 @@ RUN npm run build
 # Stage 2: Build the backend
 FROM node:20-alpine AS backend-builder
 WORKDIR /app
-COPY package.json ./
+COPY package*.json ./
 COPY tsconfig.json ./
 RUN npm install
 RUN npm install -g typescript
@@ -19,9 +19,12 @@ RUN tsc
 # Stage 3: Final image
 FROM node:20-alpine
 WORKDIR /app
-COPY --from=backend-builder /app/package.json ./
+COPY --from=backend-builder /app/package*.json ./
 RUN npm install --production
 COPY --from=backend-builder /app/dist ./dist
-COPY --from=frontend-builder /app/frontend/build ./frontend/build
+COPY --from=frontend-builder /app/frontend/build ./src/frontend/build
+COPY database ./database
 EXPOSE 3001
 CMD ["node", "dist/index.js"]
+
+

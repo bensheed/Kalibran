@@ -13,17 +13,26 @@ export const getAllBoards = async (req: Request, res: Response) => {
 
 // POST /api/boards - Create a new board
 export const createBoard = async (req: Request, res: Response) => {
+    console.log('Creating new board - Request body:', req.body);
+    console.log('Auth headers:', req.headers.authorization);
+    
     const { name } = req.body;
     if (!name) {
         return res.status(400).json({ message: 'Board name is required' });
     }
+    
     try {
+        console.log('Creating board with name:', name);
+        
         const result = await pool.query(
             'INSERT INTO boards (name, card_layout_config) VALUES ($1, $2) RETURNING *',
             [name, {}] // Default empty config
         );
+        
+        console.log('Board created successfully:', result.rows[0]);
         res.status(201).json(result.rows[0]);
     } catch (error) {
+        console.error('Error creating board:', error);
         res.status(500).json({ message: 'Error creating board' });
     }
 };
