@@ -21,7 +21,7 @@ const io = new Server(server, {
         methods: ["GET", "POST"]
     }
 });
-const port = process.env.PORT || 3001;
+const port = process.env.PORT || 53544;
 
 // Socket.io connection handler
 io.on('connection', (socket) => {
@@ -42,7 +42,7 @@ app.use(require('cookie-parser')());
 app.use(express.json());
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../../frontend/build')));
+app.use(express.static(path.join(__dirname, '../src/frontend/build')));
 
 // Setup check middleware
 const checkSetup: express.RequestHandler = async (req, res, next) => {
@@ -93,7 +93,7 @@ app.use('/api/login', authRoutes);
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../frontend/build/index.html'));
+  res.sendFile(path.join(__dirname, '../src/frontend/build/index.html'));
 });
 
 server.listen(port, () => {
