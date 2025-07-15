@@ -19,17 +19,30 @@ const Login: React.FC = () => {
         try {
             console.log('Sending login request to backend...');
             
-            // Use the API instance
-            const response = await api.post('/api/login', { pin });
+            // NUCLEAR APPROACH: Use fetch directly to bypass axios issues
+            const response = await fetch('http://localhost:3001/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: 'include',
+                body: JSON.stringify({ pin })
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+            
+            const data = await response.json();
             
             console.log('Response status:', response.status);
-            console.log('Response data:', response.data);
+            console.log('Response data:', data);
             
-            // With axios, successful responses come here
-            console.log('Login successful on frontend with token:', response.data.token);
+            // With fetch, successful responses come here
+            console.log('Login successful on frontend with token:', data.token);
             
             // The login function will set the cookie
-            login(response.data.token); // Update the auth state with token
+            login(data.token); // Update the auth state with token
             
             console.log('Auth state after login:', useAuthStore.getState().isAuthenticated ? 'Authenticated' : 'Not authenticated');
             console.log('Token stored:', useAuthStore.getState().token);
@@ -41,20 +54,10 @@ const Login: React.FC = () => {
             console.error('--- CRITICAL ERROR during frontend login ---', err);
             console.error('Error object:', err);
             
-            if (err.response) {
-                // The request was made and the server responded with a status code
-                // that falls out of the range of 2xx
-                console.error('Error response data:', err.response.data);
-                console.error('Error response status:', err.response.status);
-                const errorMessage = err.response.data?.message || 'An error occurred';
-                setError(`Error (${err.response.status}): ${errorMessage}`);
-            } else if (err.request) {
-                // The request was made but no response was received
-                console.error('No response received:', err.request);
-                setError('No response from server. Please check your connection.');
+            // With fetch, we handle errors differently
+            if (err.message.includes('HTTP error')) {
+                setError(`Login failed: ${err.message}`);
             } else {
-                // Something happened in setting up the request that triggered an Error
-                console.error('Error message:', err.message);
                 setError(`Error: ${err.message || 'Unknown error'}`);
             }
         }
