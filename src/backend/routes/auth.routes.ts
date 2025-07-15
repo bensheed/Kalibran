@@ -1,5 +1,6 @@
 import { Router, Request, Response } from 'express';
 import pool from '../services/database.service';
+import bcrypt from 'bcrypt';
 
 const router = Router();
 
@@ -26,11 +27,12 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
         return;
       }
       
-      const storedPin = result.rows[0].setting_value;
-      console.log('Stored PIN:', storedPin, 'Entered PIN:', req.body.pin);
+      const storedHashedPin = result.rows[0].setting_value;
+      console.log('Stored hashed PIN:', storedHashedPin, 'Entered PIN:', req.body.pin);
       
-      // Compare the entered PIN with the stored PIN
-      if (req.body.pin === storedPin) {
+      // Compare the entered PIN with the stored hashed PIN using bcrypt
+      const pinMatches = await bcrypt.compare(req.body.pin, storedHashedPin);
+      if (pinMatches) {
         console.log('PIN matched, creating session');
         const sessionId = `sess_${Date.now()}_${Math.random()}`;
         
