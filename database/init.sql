@@ -15,6 +15,16 @@ CREATE TABLE IF NOT EXISTS users (
     role VARCHAR(50) NOT NULL CHECK (role IN ('admin', 'tech'))
 );
 
+-- Sessions table for authentication
+CREATE TABLE IF NOT EXISTS sessions (
+    session_id VARCHAR(255) PRIMARY KEY,
+    user_id INTEGER NOT NULL DEFAULT 1, -- Default to admin user for now
+    role VARCHAR(50) NOT NULL DEFAULT 'admin',
+    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+    expires_at TIMESTAMPTZ NOT NULL,
+    last_accessed TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
 -- Kanban boards
 CREATE TABLE IF NOT EXISTS boards (
     id SERIAL PRIMARY KEY,
@@ -75,3 +85,5 @@ CREATE TABLE IF NOT EXISTS prediction_models (
 CREATE INDEX IF NOT EXISTS idx_column_transitions_job_no ON column_transitions(job_no);
 CREATE INDEX IF NOT EXISTS idx_raw_sync_data_inst_id ON raw_sync_data(Inst_ID);
 CREATE INDEX IF NOT EXISTS idx_raw_sync_data_job_no ON raw_sync_data(Job_no);
+CREATE INDEX IF NOT EXISTS idx_sessions_expires_at ON sessions(expires_at);
+CREATE INDEX IF NOT EXISTS idx_sessions_user_id ON sessions(user_id);
