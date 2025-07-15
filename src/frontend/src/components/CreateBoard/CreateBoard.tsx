@@ -76,7 +76,7 @@ const CreateBoard: React.FC = () => {
             }
             
             // Manually set the Authorization header for this specific request
-            const response = await api.post('/boards', 
+            const response = await api.post('/api/boards', 
                 { name: boardName },
                 { 
                     headers: { 
