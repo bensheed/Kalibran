@@ -14,6 +14,22 @@ const api = axios.create({
     withCredentials: true,
 });
 
+// DEBUGGING: Log the baseURL immediately after creation
+console.log('IMMEDIATE AFTER CREATION - baseURL:', api.defaults.baseURL);
+
+// DEBUGGING: Set up a property watcher to catch when baseURL changes
+let originalBaseURL = api.defaults.baseURL;
+Object.defineProperty(api.defaults, 'baseURL', {
+    get() {
+        return originalBaseURL;
+    },
+    set(newValue) {
+        console.log('BASEURL CHANGED FROM:', originalBaseURL, 'TO:', newValue);
+        console.trace('Stack trace for baseURL change:');
+        originalBaseURL = newValue;
+    }
+});
+
 // Add request interceptor for adding auth token and debugging
 api.interceptors.request.use(
     config => {
