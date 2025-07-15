@@ -4,7 +4,7 @@ import pool from '../services/database.service';
 const router = Router();
 
 // Login route handler
-router.post('/', async (req: Request, res: Response) => {
+router.post('/', async (req: Request, res: Response): Promise<void> => {
   console.log('=== LOGIN ROUTE HIT ===');
   console.log('Login route hit with body:', req.body);
   console.log('Content-Type:', req.headers['content-type']);
@@ -22,7 +22,8 @@ router.post('/', async (req: Request, res: Response) => {
       
       if (result.rows.length === 0) {
         console.log('No admin PIN found in database');
-        return res.status(401).json({ message: 'Invalid PIN. Please try again.' });
+        res.status(401).json({ message: 'Invalid PIN. Please try again.' });
+        return;
       }
       
       const storedPin = result.rows[0].setting_value;
@@ -44,21 +45,25 @@ router.post('/', async (req: Request, res: Response) => {
         
         console.log('Sending successful response with token:', sessionId);
         
-        return res.status(200).json({
+        res.status(200).json({
           message: 'Login successful',
           token: sessionId
         });
+        return;
       } else {
         console.log('PIN did not match');
-        return res.status(401).json({ message: 'Invalid PIN. Please try again.' });
+        res.status(401).json({ message: 'Invalid PIN. Please try again.' });
+        return;
       }
     } catch (error) {
       console.error('Error during login:', error);
-      return res.status(500).json({ message: 'Internal server error during login.' });
+      res.status(500).json({ message: 'Internal server error during login.' });
+      return;
     }
   } else {
     console.log('No PIN in request body');
-    return res.status(400).json({ message: 'PIN is required.' });
+    res.status(400).json({ message: 'PIN is required.' });
+    return;
   }
 });
 

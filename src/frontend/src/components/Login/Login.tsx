@@ -46,7 +46,8 @@ const Login: React.FC = () => {
                 // that falls out of the range of 2xx
                 console.error('Error response data:', err.response.data);
                 console.error('Error response status:', err.response.status);
-                setError(`Error (${err.response.status}): ${err.response.data.message || 'An error occurred'}`);
+                const errorMessage = err.response.data?.message || 'An error occurred';
+                setError(`Error (${err.response.status}): ${errorMessage}`);
             } else if (err.request) {
                 // The request was made but no response was received
                 console.error('No response received:', err.request);

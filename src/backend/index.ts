@@ -33,7 +33,7 @@ io.on('connection', (socket) => {
 
 // Middleware
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:54968', 'http://localhost:54969'], // Allow requests from the local frontend
+    origin: ['http://localhost:3000', 'http://localhost:54968', 'http://localhost:54969', 'http://localhost:56333'], // Allow requests from the local frontend
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
