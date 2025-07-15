@@ -2,7 +2,7 @@ import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 
 // Use the correct API URL with the /api prefix
-const API_URL = 'http://localhost:53544';
+const API_URL = 'http://localhost:3001';
 
 console.log('API URL configured as:', API_URL);
 
