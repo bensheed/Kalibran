@@ -19,6 +19,9 @@ const Login: React.FC = () => {
         try {
             console.log('Sending login request to backend...');
             
+            // DEBUGGING: Show what URL will be constructed
+            alert(`About to call: ${api.defaults.baseURL}/api/login`);
+            
             // Use the API instance
             const response = await api.post('/api/login', { pin });
             

@@ -1,7 +1,7 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 
-// FIXED: Use the correct API URL WITHOUT /api prefix to avoid double /api/api/
+// FORCE CORRECT URL - This should result in http://localhost:3001/api/login
 const API_URL = 'http://localhost:3001';
 
 console.log('=== API CONFIGURATION DEBUG ===');
