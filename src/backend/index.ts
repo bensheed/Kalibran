@@ -47,7 +47,7 @@ app.use(express.static(path.join(__dirname, '../src/frontend/build')));
 // Setup check middleware
 const checkSetup: express.RequestHandler = async (req, res, next) => {
     // Exclude setup routes from this check
-    if (req.path.startsWith('/setup')) {
+    if (req.path.startsWith('/setup') || req.path.startsWith('/api/setup')) {
         return next();
     }
 
@@ -80,15 +80,14 @@ const checkSetup: express.RequestHandler = async (req, res, next) => {
 app.use('/api', checkSetup);
 
 // Routes
+app.use('/setup', setupRoutes);
 app.use('/api/setup', setupRoutes);
 app.use('/api', syncRoutes);
 app.use('/api', boardRoutes);
 app.use('/api', columnRoutes);
 app.use('/api', cardRoutes);
 app.use('/api', settingsRoutes);
-// Use the auth routes - make it available at both /login and /api/login
-app.use('/login', authRoutes);
-app.use('/api/login', authRoutes);
+app.use('/api/auth', authRoutes);
 
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
