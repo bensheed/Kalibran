@@ -1,10 +1,13 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 
-// Use the correct API URL with the /api prefix
+// FIXED: Use the correct API URL WITHOUT /api prefix to avoid double /api/api/
 const API_URL = 'http://localhost:3001';
 
+console.log('=== API CONFIGURATION DEBUG ===');
 console.log('API URL configured as:', API_URL);
+console.log('This should NOT contain /api at the end');
+console.log('================================');
 
 const api = axios.create({
     baseURL: API_URL,
@@ -38,14 +41,13 @@ api.interceptors.request.use(
             console.warn('No auth token found in store or cookies');
         }
 
-        console.log('API Request:', {
-            url: config.url || '',
-            method: config.method || '',
-            baseURL: config.baseURL || '',
-            fullURL: (config.baseURL || '') + (config.url || ''),
-            data: config.data,
-            headers: config.headers
-        });
+        console.log('=== API REQUEST DEBUG ===');
+        console.log('URL:', config.url || '');
+        console.log('Method:', config.method || '');
+        console.log('BaseURL:', config.baseURL || '');
+        console.log('Full URL:', (config.baseURL || '') + (config.url || ''));
+        console.log('Data:', config.data);
+        console.log('========================');
         return config;
     },
     error => {
