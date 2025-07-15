@@ -30,7 +30,18 @@ const Login: React.FC = () => {
             });
             
             if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
+                // Try to get the error message from the response
+                let errorMessage = `HTTP error! status: ${response.status}`;
+                try {
+                    const errorData = await response.json();
+                    if (errorData.message) {
+                        errorMessage = errorData.message;
+                    }
+                } catch (e) {
+                    // If we can't parse JSON, use the status text
+                    errorMessage = response.statusText || errorMessage;
+                }
+                throw new Error(errorMessage);
             }
             
             const data = await response.json();
@@ -55,11 +66,7 @@ const Login: React.FC = () => {
             console.error('Error object:', err);
             
             // With fetch, we handle errors differently
-            if (err.message.includes('HTTP error')) {
-                setError(`Login failed: ${err.message}`);
-            } else {
-                setError(`Error: ${err.message || 'Unknown error'}`);
-            }
+            setError(err.message || 'Unknown error occurred');
         }
     };
 
