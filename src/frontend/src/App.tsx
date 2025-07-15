@@ -21,9 +21,17 @@ function App() {
         await api.get('/api/boards');
         
         // If we get here, setup is complete, check authentication
-        const hasSession = document.cookie.includes('session_id');
-        if (hasSession) {
-          useAuthStore.getState().login();
+        const cookies = document.cookie.split(';');
+        let sessionToken = null;
+        for (const cookie of cookies) {
+          const [name, value] = cookie.trim().split('=');
+          if (name === 'session_id') {
+            sessionToken = value;
+            break;
+          }
+        }
+        if (sessionToken) {
+          useAuthStore.getState().login(sessionToken);
         }
       } catch (err: any) {
         if (err.response && err.response.status === 409 && err.response.data.setupRequired) {
@@ -31,9 +39,17 @@ function App() {
           setSetupRequired(true);
         } else {
           // Other error, but setup is probably complete
-          const hasSession = document.cookie.includes('session_id');
-          if (hasSession) {
-            useAuthStore.getState().login();
+          const cookies = document.cookie.split(';');
+          let sessionToken = null;
+          for (const cookie of cookies) {
+            const [name, value] = cookie.trim().split('=');
+            if (name === 'session_id') {
+              sessionToken = value;
+              break;
+            }
+          }
+          if (sessionToken) {
+            useAuthStore.getState().login(sessionToken);
           }
         }
       } finally {

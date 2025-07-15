@@ -1,19 +1,21 @@
 import axios from 'axios';
 import { useAuthStore } from '../store/authStore';
 
-// Use the correct API URL with the /api prefix
-const API_URL = 'http://localhost:3001';
-
-console.log('API URL configured as:', API_URL);
-
+// DIRECT FIX: Create axios instance with correct baseURL
 const api = axios.create({
-    baseURL: API_URL,
+    baseURL: 'http://localhost:3001',
     withCredentials: true,
 });
 
-// Add request interceptor for adding auth token and debugging
+// FORCE OVERRIDE: Ensure baseURL stays correct
+api.defaults.baseURL = 'http://localhost:3001';
+
+// Add request interceptor for adding auth token
 api.interceptors.request.use(
     config => {
+        // FORCE CORRECT BASEURL ON EVERY REQUEST
+        config.baseURL = 'http://localhost:3001';
+        
         // Get token from auth store first (most reliable)
         const { token } = useAuthStore.getState();
         
@@ -33,23 +35,11 @@ api.interceptors.request.use(
         // Add token to headers if it exists
         if (authToken && config.headers) {
             config.headers.Authorization = `Bearer ${authToken}`;
-            console.log('Added auth token to request:', authToken);
-        } else {
-            console.warn('No auth token found in store or cookies');
         }
 
-        console.log('API Request:', {
-            url: config.url || '',
-            method: config.method || '',
-            baseURL: config.baseURL || '',
-            fullURL: (config.baseURL || '') + (config.url || ''),
-            data: config.data,
-            headers: config.headers
-        });
         return config;
     },
     error => {
-        console.error('API Request Error:', error);
         return Promise.reject(error);
     }
 );

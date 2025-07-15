@@ -33,7 +33,7 @@ io.on('connection', (socket) => {
 
 // Middleware
 app.use(cors({
-    origin: ['http://localhost:3000', 'http://localhost:54968', 'http://localhost:54969'], // Allow requests from the local frontend
+    origin: ['http://localhost:3000', 'http://localhost:3001'], // Allow requests from the local frontend
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     allowedHeaders: ['Content-Type', 'Authorization'],
     credentials: true
@@ -42,7 +42,7 @@ app.use(require('cookie-parser')());
 app.use(express.json());
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../../frontend/build')));
+app.use(express.static(path.join(__dirname, '../src/frontend/build')));
 
 // Setup check middleware
 const checkSetup: express.RequestHandler = async (req, res, next) => {
@@ -93,7 +93,7 @@ app.use('/api/login', authRoutes);
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../../frontend/build/index.html'));
+  res.sendFile(path.join(__dirname, '../src/frontend/build/index.html'));
 });
 
 server.listen(port, () => {

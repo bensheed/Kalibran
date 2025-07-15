@@ -25,6 +25,7 @@ const getAllSettings = (req, res) => __awaiter(void 0, void 0, void 0, function*
         res.status(200).json(settings);
     }
     catch (error) {
+        console.error('Error fetching settings:', error);
         res.status(500).json({ message: 'Error fetching settings' });
     }
 });
@@ -46,6 +47,7 @@ const updateSettings = (req, res) => __awaiter(void 0, void 0, void 0, function*
     }
     catch (error) {
         yield client.query('ROLLBACK');
+        console.error('Error updating settings:', error);
         res.status(500).json({ message: 'Error updating settings' });
     }
     finally {
