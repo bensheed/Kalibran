@@ -4,18 +4,15 @@ import { useAuthStore } from '../store/authStore';
 // FORCE CORRECT URL - This should result in http://localhost:3001/api/login
 const API_URL = 'http://localhost:3001';
 
-console.log('=== API CONFIGURATION DEBUG ===');
-console.log('API URL configured as:', API_URL);
-console.log('This should NOT contain /api at the end');
-console.log('================================');
+alert(`API CONFIGURATION DEBUG:\nAPI_URL variable: ${API_URL}\nThis should NOT contain /api at the end`);
 
 const api = axios.create({
     baseURL: API_URL,
     withCredentials: true,
 });
 
-// DEBUGGING: Log the baseURL immediately after creation
-console.log('IMMEDIATE AFTER CREATION - baseURL:', api.defaults.baseURL);
+// DEBUGGING: Alert the baseURL immediately after creation
+alert(`IMMEDIATE AFTER CREATION:\nbaseURL: ${api.defaults.baseURL}\nShould be: http://localhost:3001`);
 
 // DEBUGGING: Set up a property watcher to catch when baseURL changes
 let originalBaseURL = api.defaults.baseURL;
@@ -24,8 +21,7 @@ Object.defineProperty(api.defaults, 'baseURL', {
         return originalBaseURL;
     },
     set(newValue) {
-        console.log('BASEURL CHANGED FROM:', originalBaseURL, 'TO:', newValue);
-        console.trace('Stack trace for baseURL change:');
+        alert(`BASEURL CHANGED!\nFROM: ${originalBaseURL}\nTO: ${newValue}`);
         originalBaseURL = newValue;
     }
 });
