@@ -87,6 +87,7 @@ app.use('/api', boardRoutes);
 app.use('/api', columnRoutes);
 app.use('/api', cardRoutes);
 app.use('/api', settingsRoutes);
+app.use('/api/login', authRoutes);
 app.use('/api/auth', authRoutes);
 
 // The "catchall" handler: for any request that doesn't
