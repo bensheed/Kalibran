@@ -7,7 +7,7 @@ import './Login.css';
 const Login: React.FC = () => {
     const [pin, setPin] = useState('');
     const [error, setError] = useState('');
-    const { login, isAuthenticated, token } = useAuthStore();
+    const { login, isAuthenticated, token, test } = useAuthStore();
     const navigate = useNavigate();
 
     // Monitor auth state changes for debugging
@@ -57,11 +57,33 @@ const Login: React.FC = () => {
             // With fetch, successful responses come here
             console.log('Login successful on frontend with token:', data.token);
             
+            // First test the store with a simple function
+            console.log('[LOGIN] Testing store with test function...');
+            try {
+                test();
+                console.log('[LOGIN] Test function completed successfully');
+            } catch (testError) {
+                console.error('[LOGIN] Error calling test function:', testError);
+            }
+            
             // The login function will set the cookie
-            login(data.token); // Update the auth state with token
+            console.log('[LOGIN] About to call login function with token:', data.token);
+            console.log('[LOGIN] Login function reference:', typeof login);
+            
+            try {
+                login(data.token); // Update the auth state with token
+                console.log('[LOGIN] Login function completed successfully');
+            } catch (loginError) {
+                console.error('[LOGIN] Error calling login function:', loginError);
+                throw loginError;
+            }
+            
+            // Check state immediately after login call
+            const stateAfterLogin = useAuthStore.getState();
+            console.log('[LOGIN] State immediately after login call:', stateAfterLogin);
             
             // The useEffect above will log the state changes
-            console.log('Login function called, navigating to /create-board');
+            console.log('[LOGIN] Navigating to /create-board');
             navigate('/create-board');
         } catch (err: any) {
             console.error('--- CRITICAL ERROR during frontend login ---', err);

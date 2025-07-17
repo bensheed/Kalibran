@@ -3,6 +3,7 @@ import { create } from 'zustand';
 interface AuthState {
     isAuthenticated: boolean;
     token: string | null;
+    test: () => void;
     login: (token: string) => void;
     logout: () => void;
     initializeAuth: () => void;
@@ -37,6 +38,13 @@ const getTokenFromStorage = (): string | null => {
 export const useAuthStore = create<AuthState>()((set, get) => ({
     isAuthenticated: false,
     token: null,
+    
+    // Test function to verify store is working
+    test: () => {
+        console.log('[AUTH] Test function called');
+        set({ token: 'test-token' });
+        console.log('[AUTH] Test function completed, state:', get());
+    },
     
     login: (token: string) => {
         console.log('[AUTH] Starting login with token:', token);
