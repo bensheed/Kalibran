@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { useAuthStore } from '../../store/authStore';
+import { useTestStore } from '../../store/testStore';
 import './Login.css';
 
 const Login: React.FC = () => {
     const [pin, setPin] = useState('');
     const [error, setError] = useState('');
     const { login, isAuthenticated, token, test } = useAuthStore();
+    const { setValue: setTestValue } = useTestStore();
     const navigate = useNavigate();
 
     // Monitor auth state changes for debugging
@@ -57,13 +59,22 @@ const Login: React.FC = () => {
             // With fetch, successful responses come here
             console.log('Login successful on frontend with token:', data.token);
             
-            // First test the store with a simple function
-            console.log('[LOGIN] Testing store with test function...');
+            // First test a simple store to see if Zustand works at all
+            console.log('[LOGIN] Testing simple test store...');
+            try {
+                setTestValue('test-value');
+                console.log('[LOGIN] Simple test store worked');
+            } catch (simpleTestError) {
+                console.error('[LOGIN] Error with simple test store:', simpleTestError);
+            }
+            
+            // Then test the auth store with a simple function
+            console.log('[LOGIN] Testing auth store with test function...');
             try {
                 test();
-                console.log('[LOGIN] Test function completed successfully');
+                console.log('[LOGIN] Auth test function completed successfully');
             } catch (testError) {
-                console.error('[LOGIN] Error calling test function:', testError);
+                console.error('[LOGIN] Error calling auth test function:', testError);
             }
             
             // The login function will set the cookie
