@@ -1,5 +1,7 @@
 import { create } from 'zustand';
 
+console.log('[AUTH_FILE] Auth store file is being loaded');
+
 interface AuthState {
     isAuthenticated: boolean;
     token: string | null;
@@ -34,6 +36,8 @@ const getTokenFromStorage = (): string | null => {
     }
     return null;
 };
+
+console.log('[AUTH_FILE] About to create auth store');
 
 export const useAuthStore = create<AuthState>((set, get) => {
     console.log('[AUTH] Store created, set function type:', typeof set);
