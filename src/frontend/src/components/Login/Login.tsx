@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { useAuthStore } from '../../store/authStore';
+import { useAuthStore2 } from '../../store/authStore2';
 import { useTestStore } from '../../store/testStore';
 import './Login.css';
 
@@ -9,6 +10,7 @@ const Login: React.FC = () => {
     const [pin, setPin] = useState('');
     const [error, setError] = useState('');
     const { login, isAuthenticated, token, test } = useAuthStore();
+    const { login: login2, isAuthenticated: isAuthenticated2, token: token2, test: test2 } = useAuthStore2();
     const { setValue: setTestValue } = useTestStore();
     const navigate = useNavigate();
 
@@ -75,6 +77,15 @@ const Login: React.FC = () => {
                 console.log('[LOGIN] Auth test function completed successfully');
             } catch (testError) {
                 console.error('[LOGIN] Error calling auth test function:', testError);
+            }
+            
+            // Test the new auth store 2
+            console.log('[LOGIN] Testing auth store 2 with test function...');
+            try {
+                test2();
+                console.log('[LOGIN] Auth2 test function completed successfully');
+            } catch (testError2) {
+                console.error('[LOGIN] Error calling auth2 test function:', testError2);
             }
             
             // The login function will set the cookie
