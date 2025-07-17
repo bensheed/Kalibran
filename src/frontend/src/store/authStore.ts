@@ -35,7 +35,7 @@ const getTokenFromStorage = (): string | null => {
     return null;
 };
 
-export const useAuthStore = create<AuthState>()((set, get) => ({
+export const useAuthStore = create<AuthState>((set, get) => ({
     isAuthenticated: false,
     token: null,
     
