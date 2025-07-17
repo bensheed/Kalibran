@@ -36,16 +36,23 @@ export const useBoardStore = create<BoardState>((set) => ({
         }
     },
     fetchBoardById: async (id: number) => {
+        console.log('[BOARD_STORE] Fetching board with ID:', id);
         set({ loading: true, error: null });
         try {
+            console.log('[BOARD_STORE] Making API request to /boards/' + id);
             const response = await api.get(`/boards/${id}`);
+            console.log('[BOARD_STORE] API response received:', response.data);
             set({
                 selectedBoard: response.data,
-                columns: response.data.columns,
-                cards: response.data.cards,
+                columns: response.data.columns || [],
+                cards: response.data.cards || [],
                 loading: false,
             });
-        } catch (error) {
+            console.log('[BOARD_STORE] Board data set successfully');
+        } catch (error: any) {
+            console.error('[BOARD_STORE] Error fetching board:', error);
+            console.error('[BOARD_STORE] Error response:', error.response?.data);
+            console.error('[BOARD_STORE] Error status:', error.response?.status);
             set({ error: 'Failed to fetch board', loading: false });
         }
     },
