@@ -12,7 +12,7 @@ const Login: React.FC = () => {
 
     // Monitor auth state changes for debugging
     useEffect(() => {
-        console.log('Login component - Auth state changed:', { isAuthenticated, token: token ? `${token.substring(0, 10)}...` : 'null' });
+        console.log('[LOGIN] Auth state changed:', { isAuthenticated, token: token ? `${token.substring(0, 10)}...` : 'null' });
     }, [isAuthenticated, token]);
 
     const handleLogin = async (e: React.FormEvent) => {

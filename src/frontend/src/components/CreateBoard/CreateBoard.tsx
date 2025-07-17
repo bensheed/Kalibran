@@ -11,14 +11,14 @@ const CreateBoard: React.FC = () => {
     const { isAuthenticated, token } = useAuthStore();
     
     useEffect(() => {
-        console.log('📋 CREATE BOARD: Component mounted/updated');
-        console.log('📋 CREATE BOARD: isAuthenticated:', isAuthenticated);
-        console.log('📋 CREATE BOARD: token:', token ? `${token.substring(0, 10)}...` : 'No token');
-        console.log('📋 CREATE BOARD: Full auth state:', { isAuthenticated, token });
+        console.log('[CREATE_BOARD] Component mounted/updated');
+        console.log('[CREATE_BOARD] isAuthenticated:', isAuthenticated);
+        console.log('[CREATE_BOARD] token:', token ? `${token.substring(0, 10)}...` : 'No token');
+        console.log('[CREATE_BOARD] Full auth state:', { isAuthenticated, token });
         
         // Check if user is authenticated
         if (!isAuthenticated) {
-            console.log('📋 CREATE BOARD: User is not authenticated, redirecting to login');
+            console.log('[CREATE_BOARD] User is not authenticated, redirecting to login');
             navigate('/login');
         }
     }, [isAuthenticated, token, navigate]);
@@ -31,13 +31,13 @@ const CreateBoard: React.FC = () => {
             return;
         }
         try {
-            console.log('📋 CREATE BOARD: Attempting to create board with name:', boardName);
-            console.log('📋 CREATE BOARD: isAuthenticated:', isAuthenticated);
-            console.log('📋 CREATE BOARD: token:', token);
-            console.log('📋 CREATE BOARD: Full auth state from store:', useAuthStore.getState());
+            console.log('[CREATE_BOARD] Attempting to create board with name:', boardName);
+            console.log('[CREATE_BOARD] isAuthenticated:', isAuthenticated);
+            console.log('[CREATE_BOARD] token:', token);
+            console.log('[CREATE_BOARD] Full auth state from store:', useAuthStore.getState());
             
             if (!token) {
-                console.error('📋 CREATE BOARD: No authentication token found!');
+                console.error('[CREATE_BOARD] No authentication token found!');
                 setError('Authentication error: No token found');
                 return;
             }

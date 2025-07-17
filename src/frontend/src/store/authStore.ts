@@ -39,43 +39,43 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
     token: null,
     
     login: (token: string) => {
-        console.log('🔐 AUTH STORE: Starting login with token:', token);
-        console.log('🔐 AUTH STORE: Current state before set:', get());
+        console.log('[AUTH] Starting login with token:', token);
+        console.log('[AUTH] Current state before set:', get());
         
         // Use functional update to ensure proper state setting
         set((state) => {
-            console.log('🔐 AUTH STORE: Inside set function, previous state:', state);
+            console.log('[AUTH] Inside set function, previous state:', state);
             const newState = {
                 ...state,
                 isAuthenticated: true,
                 token: token
             };
-            console.log('🔐 AUTH STORE: Inside set function, new state:', newState);
+            console.log('[AUTH] Inside set function, new state:', newState);
             return newState;
         });
         
         // Verify the state was set correctly
         const currentState = get();
-        console.log('🔐 AUTH STORE: State after set:', currentState);
-        console.log('🔐 AUTH STORE: isAuthenticated:', currentState.isAuthenticated);
-        console.log('🔐 AUTH STORE: token:', currentState.token);
+        console.log('[AUTH] State after set:', currentState);
+        console.log('[AUTH] isAuthenticated:', currentState.isAuthenticated);
+        console.log('[AUTH] token:', currentState.token);
         
         // Set the token in a cookie for API requests
         document.cookie = `session_id=${token}; path=/; max-age=86400`;
-        console.log('🔐 AUTH STORE: Cookie set:', document.cookie);
+        console.log('[AUTH] Cookie set:', document.cookie);
         
         // Also store in localStorage as a backup
         try {
             localStorage.setItem('isAuthenticated', 'true');
             localStorage.setItem('authToken', token);
-            console.log('🔐 AUTH STORE: localStorage updated');
+            console.log('[AUTH] localStorage updated');
         } catch (e) {
-            console.error('Failed to store auth state in localStorage:', e);
+            console.error('[AUTH] Failed to store auth state in localStorage:', e);
         }
     },
     
     logout: () => {
-        console.log('🔐 AUTH STORE: Logging out');
+        console.log('[AUTH] Logging out');
         document.cookie = 'session_id=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
         set({ isAuthenticated: false, token: null });
         
@@ -84,12 +84,12 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
             localStorage.removeItem('isAuthenticated');
             localStorage.removeItem('authToken');
         } catch (e) {
-            console.error('Failed to remove auth state from localStorage:', e);
+            console.error('[AUTH] Failed to remove auth state from localStorage:', e);
         }
     },
     
     initializeAuth: () => {
-        console.log('🔐 AUTH STORE: Initializing auth');
+        console.log('[AUTH] Initializing auth');
         
         // Try to restore authentication state from cookie or localStorage
         const cookieToken = getTokenFromCookie();
@@ -98,7 +98,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
         const token = cookieToken || storageToken;
         
         if (token) {
-            console.log('🔐 AUTH STORE: Found existing token, restoring auth');
+            console.log('[AUTH] Found existing token, restoring auth');
             set({ isAuthenticated: true, token });
             
             // Ensure cookie is set if we got token from localStorage
@@ -106,7 +106,7 @@ export const useAuthStore = create<AuthState>()((set, get) => ({
                 document.cookie = `session_id=${token}; path=/; max-age=86400`;
             }
         } else {
-            console.log('🔐 AUTH STORE: No existing token found');
+            console.log('[AUTH] No existing token found');
             set({ isAuthenticated: false, token: null });
         }
     }
