@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const database_service_1 = __importDefault(require("../services/database.service"));
 const bcrypt_1 = __importDefault(require("bcrypt"));
+const session_service_1 = require("../services/session.service");
 const router = (0, express_1.Router)();
 // Login route handler
 router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -43,6 +44,8 @@ router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
             if (pinMatches) {
                 console.log('PIN matched, creating session');
                 const sessionId = `sess_${Date.now()}_${Math.random()}`;
+                // Store the session in the shared session service
+                (0, session_service_1.createSession)(sessionId, 1, 'admin');
                 // Set a cookie for the session
                 res.cookie('session_id', sessionId, {
                     httpOnly: true,

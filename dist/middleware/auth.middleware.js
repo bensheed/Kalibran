@@ -14,8 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.isAdmin = exports.authenticate = void 0;
 const database_service_1 = __importDefault(require("../services/database.service"));
-// A simple session store (in-memory, not for production)
-const activeSessions = {};
+const session_service_1 = require("../services/session.service");
 const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
     const { pin } = req.body;
     console.log('--- Authentication Attempt ---');
@@ -41,7 +40,7 @@ const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         console.log('PIN match result:', match);
         if (match) {
             const sessionId = `sess_${Date.now()}_${Math.random()}`;
-            activeSessions[sessionId] = { userId: 1, role: 'admin' };
+            (0, session_service_1.createSession)(sessionId, 1, 'admin');
             console.log('Authentication successful. Session created:', sessionId);
             // Set a cookie for the session
             res.cookie('session_id', sessionId, {
@@ -70,19 +69,16 @@ const isAdmin = (req, res, next) => {
     console.log('Auth middleware - Authorization header:', authHeader ? `${authHeader.substring(0, 15)}...` : 'Missing');
     const token = authHeader === null || authHeader === void 0 ? void 0 : authHeader.split(' ')[1];
     console.log('Auth middleware - Checking token:', token ? `${token.substring(0, 10)}...` : 'No token');
-    console.log('Auth middleware - Active sessions:', Object.keys(activeSessions).length);
-    console.log('Auth middleware - Active session IDs:', Object.keys(activeSessions));
     if (!token) {
         console.log('Auth middleware - No token provided in request');
         return res.status(401).json({ message: 'Unauthorized: No token provided.' });
     }
-    if (!activeSessions[token]) {
+    const session = (0, session_service_1.getSession)(token);
+    if (!session) {
         console.log('Auth middleware - Token not found in active sessions');
         console.log('Auth middleware - Received token:', token);
-        console.log('Auth middleware - Available tokens:', Object.keys(activeSessions));
         return res.status(401).json({ message: 'Unauthorized: No active session.' });
     }
-    const session = activeSessions[token];
     console.log('Auth middleware - Session found:', session);
     if (session.role !== 'admin') {
         console.log('Auth middleware - User is not an admin');

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../services/api';
+import { createBoard } from '../../services/api';
 import { useAuthStore2 as useAuthStore } from '../../store/authStore2';
 import './CreateBoard.css';
 
@@ -42,16 +42,16 @@ const CreateBoard: React.FC = () => {
                 return;
             }
             
-            // The API service will automatically add the Authorization header
-            const response = await api.post('/api/boards', { name: boardName });
+            // Use the standardized API service
+            const data = await createBoard(boardName);
             
-            console.log('Create board response:', response);
+            console.log('Create board response:', data);
             
-            if (response.data && response.data.id) {
-                console.log('Board created successfully, navigating to:', `/board/${response.data.id}`);
-                navigate(`/board/${response.data.id}`);
+            if (data && data.id) {
+                console.log('Board created successfully, navigating to:', `/board/${data.id}`);
+                navigate(`/board/${data.id}`);
             } else {
-                console.error('Board creation response did not contain an ID:', response.data);
+                console.error('Board creation response did not contain an ID:', data);
                 setError('Failed to create board. Please try again.');
             }
         } catch (err: any) {

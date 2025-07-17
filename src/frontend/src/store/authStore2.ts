@@ -61,18 +61,36 @@ export const useAuthStore2 = create<AuthState>((set, get) => {
         
         login: (token: string) => {
             console.log('[AUTH2] Starting login with token:', token);
+            console.log('[AUTH2] Token type:', typeof token);
+            console.log('[AUTH2] Token length:', token ? token.length : 'null/undefined');
             console.log('[AUTH2] Current state before set:', get());
             console.log('[AUTH2] set function type in login:', typeof set);
             
             try {
-                // Use simple object update first
+                // Try setting just the token first
+                console.log('[AUTH2] Setting token only first...');
+                set({ token });
+                
+                let currentState = get();
+                console.log('[AUTH2] State after setting token only:', currentState);
+                
+                // Now set isAuthenticated
+                console.log('[AUTH2] Setting isAuthenticated to true...');
+                set({ isAuthenticated: true });
+                
+                currentState = get();
+                console.log('[AUTH2] State after setting isAuthenticated:', currentState);
+                
+                // Now set both together to be sure
+                console.log('[AUTH2] Setting both together...');
                 set({ isAuthenticated: true, token });
                 
                 // Verify the state was set correctly
-                const currentState = get();
-                console.log('[AUTH2] State after set:', currentState);
-                console.log('[AUTH2] isAuthenticated:', currentState.isAuthenticated);
-                console.log('[AUTH2] token:', currentState.token);
+                currentState = get();
+                console.log('[AUTH2] Final state after set:', currentState);
+                console.log('[AUTH2] Final isAuthenticated:', currentState.isAuthenticated);
+                console.log('[AUTH2] Final token:', currentState.token);
+                console.log('[AUTH2] Final token type:', typeof currentState.token);
                 
                 // Set the token in a cookie for API requests
                 document.cookie = `session_id=${token}; path=/; max-age=86400`;

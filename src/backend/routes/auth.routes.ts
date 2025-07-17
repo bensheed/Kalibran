@@ -1,6 +1,7 @@
 import { Router, Request, Response } from 'express';
 import pool from '../services/database.service';
 import bcrypt from 'bcrypt';
+import { createSession } from '../services/session.service';
 
 const router = Router();
 
@@ -35,6 +36,9 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
       if (pinMatches) {
         console.log('PIN matched, creating session');
         const sessionId = `sess_${Date.now()}_${Math.random()}`;
+        
+        // Store the session in the shared session service
+        createSession(sessionId, 1, 'admin');
         
         // Set a cookie for the session
         res.cookie('session_id', sessionId, {

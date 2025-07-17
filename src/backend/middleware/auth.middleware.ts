@@ -1,9 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import bcrypt from 'bcrypt';
 import pool from '../services/database.service';
-
-// A simple session store (in-memory, not for production)
-const activeSessions: { [sessionId: string]: { userId: number; role: string } } = {};
+import { createSession, getSession } from '../services/session.service';
 
 export const authenticate = async (req: Request, res: Response, next: NextFunction) => {
     const { pin } = req.body;
@@ -36,7 +34,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
         if (match) {
             const sessionId = `sess_${Date.now()}_${Math.random()}`;
-            activeSessions[sessionId] = { userId: 1, role: 'admin' };
+            createSession(sessionId, 1, 'admin');
             console.log('Authentication successful. Session created:', sessionId);
 
             // Set a cookie for the session
@@ -67,22 +65,19 @@ export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
     const token = authHeader?.split(' ')[1];
     
     console.log('Auth middleware - Checking token:', token ? `${token.substring(0, 10)}...` : 'No token');
-    console.log('Auth middleware - Active sessions:', Object.keys(activeSessions).length);
-    console.log('Auth middleware - Active session IDs:', Object.keys(activeSessions));
     
     if (!token) {
         console.log('Auth middleware - No token provided in request');
         return res.status(401).json({ message: 'Unauthorized: No token provided.' });
     }
     
-    if (!activeSessions[token]) {
+    const session = getSession(token);
+    if (!session) {
         console.log('Auth middleware - Token not found in active sessions');
         console.log('Auth middleware - Received token:', token);
-        console.log('Auth middleware - Available tokens:', Object.keys(activeSessions));
         return res.status(401).json({ message: 'Unauthorized: No active session.' });
     }
 
-    const session = activeSessions[token];
     console.log('Auth middleware - Session found:', session);
     
     if (session.role !== 'admin') {

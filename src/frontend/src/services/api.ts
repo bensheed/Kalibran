@@ -48,4 +48,15 @@ api.interceptors.request.use(
     }
 );
 
+// API functions
+export const loginUser = async (pin: string) => {
+    const response = await api.post('/api/login', { pin });
+    return response.data;
+};
+
+export const createBoard = async (name: string) => {
+    const response = await api.post('/api/boards', { name });
+    return response.data;
+};
+
 export default api;

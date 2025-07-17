@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import api from '../../services/api';
+import { loginUser } from '../../services/api';
 import { useAuthStore2 as useAuthStore } from '../../store/authStore2';
 import { useTestStore } from '../../store/testStore';
 import './Login.css';
@@ -26,37 +26,11 @@ const Login: React.FC = () => {
         try {
             console.log('Sending login request to backend...');
             
-            // NUCLEAR APPROACH: Use fetch directly to bypass axios issues
-            const response = await fetch('http://localhost:3001/api/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: 'include',
-                body: JSON.stringify({ pin })
-            });
-            
-            if (!response.ok) {
-                // Try to get the error message from the response
-                let errorMessage = `HTTP error! status: ${response.status}`;
-                try {
-                    const errorData = await response.json();
-                    if (errorData.message) {
-                        errorMessage = errorData.message;
-                    }
-                } catch (e) {
-                    // If we can't parse JSON, use the status text
-                    errorMessage = response.statusText || errorMessage;
-                }
-                throw new Error(errorMessage);
-            }
-            
-            const data = await response.json();
-            
-            console.log('Response status:', response.status);
+            // Use the standardized API service
+            const data = await loginUser(pin);
             console.log('Response data:', data);
             
-            // With fetch, successful responses come here
+            // Login successful
             console.log('Login successful on frontend with token:', data.token);
             
             // First test a simple store to see if Zustand works at all
