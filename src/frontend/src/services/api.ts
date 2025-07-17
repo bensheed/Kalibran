@@ -16,6 +16,10 @@ api.interceptors.request.use(
         // FORCE CORRECT BASEURL ON EVERY REQUEST
         config.baseURL = 'http://localhost:3001';
         
+        console.log('[API] Request interceptor - URL:', config.url);
+        console.log('[API] Request interceptor - baseURL:', config.baseURL);
+        console.log('[API] Request interceptor - full URL will be:', config.baseURL + config.url);
+        
         // Get token from auth store first (most reliable)
         const { token } = useAuthStore.getState();
         

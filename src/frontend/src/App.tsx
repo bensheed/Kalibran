@@ -64,7 +64,7 @@ function App() {
             <Route path="/create-board" element={isAuthenticated ? <CreateBoard /> : <Login />} />
             <Route path="/settings" element={isAuthenticated ? <Settings /> : <Login />} />
             <Route path="/board/:boardId" element={isAuthenticated ? <Board /> : <Login />} />
-            <Route path="/" element={isAuthenticated ? <Board /> : <Login />} />
+            <Route path="/" element={isAuthenticated ? <Navigate to="/create-board" replace /> : <Login />} />
           </>
         )}
       </Routes>
