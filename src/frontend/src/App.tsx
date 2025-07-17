@@ -9,7 +9,7 @@ import CreateBoard from './components/CreateBoard/CreateBoard';
 import api from './services/api';
 
 function App() {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, initializeAuth } = useAuthStore();
   const [loading, setLoading] = useState(true);
   const [setupRequired, setSetupRequired] = useState(false);
 
@@ -17,40 +17,21 @@ function App() {
     // Check if setup is required and authentication status
     const initialize = async () => {
       try {
+        // Initialize auth state from stored tokens first
+        initializeAuth();
+        
         // Try to access a protected endpoint to see if setup is required
         await api.get('/api/boards');
         
-        // If we get here, setup is complete, check authentication
-        const cookies = document.cookie.split(';');
-        let sessionToken = null;
-        for (const cookie of cookies) {
-          const [name, value] = cookie.trim().split('=');
-          if (name === 'session_id') {
-            sessionToken = value;
-            break;
-          }
-        }
-        if (sessionToken) {
-          useAuthStore.getState().login(sessionToken);
-        }
+        // If we get here, setup is complete
+        console.log('Setup is complete, authentication initialized');
       } catch (err: any) {
         if (err.response && err.response.status === 409 && err.response.data.setupRequired) {
           console.log('Setup required, will redirect to setup page');
           setSetupRequired(true);
         } else {
           // Other error, but setup is probably complete
-          const cookies = document.cookie.split(';');
-          let sessionToken = null;
-          for (const cookie of cookies) {
-            const [name, value] = cookie.trim().split('=');
-            if (name === 'session_id') {
-              sessionToken = value;
-              break;
-            }
-          }
-          if (sessionToken) {
-            useAuthStore.getState().login(sessionToken);
-          }
+          console.log('Setup appears complete, authentication initialized');
         }
       } finally {
         setLoading(false);
@@ -58,7 +39,7 @@ function App() {
     };
     
     initialize();
-  }, []);
+  }, [initializeAuth]);
 
   if (loading) {
     return <div>Loading...</div>;

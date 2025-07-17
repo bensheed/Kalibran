@@ -17,25 +17,8 @@ const CreateBoard: React.FC = () => {
         
         // Check if user is authenticated
         if (!isAuthenticated) {
-            console.error('User is not authenticated in CreateBoard component');
-            
-            // Check if we have a token in cookies before redirecting
-            const cookies = document.cookie.split(';');
-            let hasSessionCookie = false;
-            for (const cookie of cookies) {
-                const [name, value] = cookie.trim().split('=');
-                if (name === 'session_id' && value) {
-                    console.log('Found session cookie, logging in with it');
-                    useAuthStore.getState().login(value);
-                    hasSessionCookie = true;
-                    break;
-                }
-            }
-            
-            if (!hasSessionCookie) {
-                console.log('No session cookie found, redirecting to login');
-                navigate('/login');
-            }
+            console.log('User is not authenticated, redirecting to login');
+            navigate('/login');
         }
     }, [isAuthenticated, token, navigate]);
 
@@ -48,46 +31,17 @@ const CreateBoard: React.FC = () => {
         }
         try {
             console.log('Attempting to create board with name:', boardName);
-            console.log('Auth state:', useAuthStore.getState().isAuthenticated ? 'Authenticated' : 'Not authenticated');
-            console.log('Token for board creation:', useAuthStore.getState().token);
+            console.log('Auth state:', isAuthenticated ? 'Authenticated' : 'Not authenticated');
+            console.log('Token for board creation:', token);
             
-            // Get the token directly from the store
-            const currentToken = useAuthStore.getState().token;
-            console.log('Token for board creation (raw):', currentToken);
-            
-            // Get token from cookie as fallback
-            let tokenToUse = currentToken;
-            if (!tokenToUse) {
-                const cookies = document.cookie.split(';');
-                for (const cookie of cookies) {
-                    const [name, value] = cookie.trim().split('=');
-                    if (name === 'session_id') {
-                        tokenToUse = value;
-                        console.log('Using token from cookie instead:', tokenToUse);
-                        break;
-                    }
-                }
-            }
-            
-            if (!tokenToUse) {
-                console.error('No authentication token found in store or cookies!');
+            if (!token) {
+                console.error('No authentication token found!');
                 setError('Authentication error: No token found');
                 return;
             }
             
-            // Manually set the Authorization header for this specific request
-            const response = await api.post('/boards', 
-                { name: boardName },
-                { 
-                    headers: { 
-                        'Authorization': `Bearer ${tokenToUse}` 
-                    } 
-                }
-            );
-            
-            console.log('Request headers sent:', {
-                'Authorization': `Bearer ${currentToken}`
-            });
+            // The API service will automatically add the Authorization header
+            const response = await api.post('/api/boards', { name: boardName });
             
             console.log('Create board response:', response);
             

@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = require("express");
 const database_service_1 = __importDefault(require("../services/database.service"));
+const bcrypt_1 = __importDefault(require("bcrypt"));
 const router = (0, express_1.Router)();
 // Login route handler
 router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
@@ -35,10 +36,11 @@ router.post('/', (req, res) => __awaiter(void 0, void 0, void 0, function* () {
                 res.status(401).json({ message: 'Invalid PIN. Please try again.' });
                 return;
             }
-            const storedPin = result.rows[0].setting_value;
-            console.log('Stored PIN:', storedPin, 'Entered PIN:', req.body.pin);
-            // Compare the entered PIN with the stored PIN
-            if (req.body.pin === storedPin) {
+            const storedHashedPin = result.rows[0].setting_value;
+            console.log('Stored hashed PIN:', storedHashedPin, 'Entered PIN:', req.body.pin);
+            // Compare the entered PIN with the stored hashed PIN using bcrypt
+            const pinMatches = yield bcrypt_1.default.compare(req.body.pin, storedHashedPin);
+            if (pinMatches) {
                 console.log('PIN matched, creating session');
                 const sessionId = `sess_${Date.now()}_${Math.random()}`;
                 // Set a cookie for the session
