@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
 import { useAuthStore } from '../../store/authStore';
@@ -7,8 +7,13 @@ import './Login.css';
 const Login: React.FC = () => {
     const [pin, setPin] = useState('');
     const [error, setError] = useState('');
-    const { login } = useAuthStore();
+    const { login, isAuthenticated, token } = useAuthStore();
     const navigate = useNavigate();
+
+    // Monitor auth state changes for debugging
+    useEffect(() => {
+        console.log('Login component - Auth state changed:', { isAuthenticated, token: token ? `${token.substring(0, 10)}...` : 'null' });
+    }, [isAuthenticated, token]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -55,11 +60,8 @@ const Login: React.FC = () => {
             // The login function will set the cookie
             login(data.token); // Update the auth state with token
             
-            console.log('Auth state after login:', useAuthStore.getState().isAuthenticated ? 'Authenticated' : 'Not authenticated');
-            console.log('Token stored:', useAuthStore.getState().token);
-            
-            // Use React Router for navigation
-            console.log('Navigating to /create-board');
+            // The useEffect above will log the state changes
+            console.log('Login function called, navigating to /create-board');
             navigate('/create-board');
         } catch (err: any) {
             console.error('--- CRITICAL ERROR during frontend login ---', err);

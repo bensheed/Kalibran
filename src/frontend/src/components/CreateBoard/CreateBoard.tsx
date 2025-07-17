@@ -11,13 +11,14 @@ const CreateBoard: React.FC = () => {
     const { isAuthenticated, token } = useAuthStore();
     
     useEffect(() => {
-        console.log('CreateBoard component mounted');
-        console.log('Auth state in CreateBoard:', isAuthenticated ? 'Authenticated' : 'Not authenticated');
-        console.log('Token in CreateBoard:', token ? `${token.substring(0, 5)}...` : 'No token');
+        console.log('📋 CREATE BOARD: Component mounted/updated');
+        console.log('📋 CREATE BOARD: isAuthenticated:', isAuthenticated);
+        console.log('📋 CREATE BOARD: token:', token ? `${token.substring(0, 10)}...` : 'No token');
+        console.log('📋 CREATE BOARD: Full auth state:', { isAuthenticated, token });
         
         // Check if user is authenticated
         if (!isAuthenticated) {
-            console.log('User is not authenticated, redirecting to login');
+            console.log('📋 CREATE BOARD: User is not authenticated, redirecting to login');
             navigate('/login');
         }
     }, [isAuthenticated, token, navigate]);
@@ -30,12 +31,13 @@ const CreateBoard: React.FC = () => {
             return;
         }
         try {
-            console.log('Attempting to create board with name:', boardName);
-            console.log('Auth state:', isAuthenticated ? 'Authenticated' : 'Not authenticated');
-            console.log('Token for board creation:', token);
+            console.log('📋 CREATE BOARD: Attempting to create board with name:', boardName);
+            console.log('📋 CREATE BOARD: isAuthenticated:', isAuthenticated);
+            console.log('📋 CREATE BOARD: token:', token);
+            console.log('📋 CREATE BOARD: Full auth state from store:', useAuthStore.getState());
             
             if (!token) {
-                console.error('No authentication token found!');
+                console.error('📋 CREATE BOARD: No authentication token found!');
                 setError('Authentication error: No token found');
                 return;
             }
