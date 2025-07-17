@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { useAuthStore } from './store/authStore';
+import { useAuthStore2 as useAuthStore } from './store/authStore2';
 import Login from './components/Login/Login';
 import Board from './components/Board/Board';
 import Settings from './components/Settings/Settings';

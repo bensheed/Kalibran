@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../services/api';
-import { useAuthStore } from '../../store/authStore';
+import { useAuthStore2 as useAuthStore } from '../../store/authStore2';
 import './CreateBoard.css';
 
 const CreateBoard: React.FC = () => {
@@ -34,7 +34,7 @@ const CreateBoard: React.FC = () => {
             console.log('[CREATE_BOARD] Attempting to create board with name:', boardName);
             console.log('[CREATE_BOARD] isAuthenticated:', isAuthenticated);
             console.log('[CREATE_BOARD] token:', token);
-            console.log('[CREATE_BOARD] Full auth state from store:', useAuthStore.getState());
+            console.log('[CREATE_BOARD] Full auth state from store:', { isAuthenticated, token });
             
             if (!token) {
                 console.error('[CREATE_BOARD] No authentication token found!');

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { useAuthStore } from '../store/authStore';
+import { useAuthStore2 as useAuthStore } from '../store/authStore2';
 
 // DIRECT FIX: Create axios instance with correct baseURL
 const api = axios.create({
