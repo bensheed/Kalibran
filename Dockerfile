@@ -4,6 +4,7 @@ WORKDIR /app/frontend
 COPY src/frontend/package*.json ./
 RUN npm install
 COPY src/frontend/ .
+# Force clean build to avoid cache issues
 RUN npm run build
 
 # Stage 2: Build the backend
