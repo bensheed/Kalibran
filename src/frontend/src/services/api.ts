@@ -59,6 +59,11 @@ export const loginUser = async (pin: string) => {
     return response.data;
 };
 
+// Ensure loginUser is available for debugging
+if (typeof window !== 'undefined') {
+    (window as any).loginUser = loginUser;
+}
+
 export const createBoard = async (name: string) => {
     const response = await api.post('/api/boards', { name });
     return response.data;

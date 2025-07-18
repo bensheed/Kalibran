@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { loginUser } from '../../services/api';
+import * as api from '../../services/api';
+const { loginUser } = api;
 import { useAuthStore2 as useAuthStore } from '../../store/authStore2';
 import './Login.css';
 
