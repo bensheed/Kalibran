@@ -1,5 +1,7 @@
 import axios from 'axios';
 
+console.log('[API] Loading api.ts file...');
+
 // Helper functions to get token without circular import
 const getTokenFromCookie = (): string | null => {
     const cookies = document.cookie.split(';');
@@ -16,6 +18,8 @@ const getTokenFromStorage = (): string | null => {
     return localStorage.getItem('token');
 };
 
+console.log('[API] Creating axios instance...');
+
 // DIRECT FIX: Create axios instance with correct baseURL
 const api = axios.create({
     baseURL: 'http://localhost:3001',
@@ -24,6 +28,8 @@ const api = axios.create({
 
 // FORCE OVERRIDE: Ensure baseURL stays correct
 api.defaults.baseURL = 'http://localhost:3001';
+
+console.log('[API] Axios instance created successfully');
 
 // Add request interceptor for adding auth token
 api.interceptors.request.use(
@@ -53,15 +59,23 @@ api.interceptors.request.use(
     }
 );
 
+console.log('[API] Defining loginUser function...');
+
 // API functions
 export const loginUser = async (pin: string) => {
+    console.log('[API] loginUser called with pin:', pin);
     const response = await api.post('/api/login', { pin });
     return response.data;
 };
 
+console.log('[API] loginUser function defined');
+
 // Ensure loginUser is available for debugging
 if (typeof window !== 'undefined') {
     (window as any).loginUser = loginUser;
+    console.log('[API] loginUser added to window object');
+} else {
+    console.log('[API] window object not available');
 }
 
 export const createBoard = async (name: string) => {
