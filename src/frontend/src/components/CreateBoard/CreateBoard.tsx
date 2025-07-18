@@ -14,10 +14,12 @@ const CreateBoard: React.FC = () => {
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const { isAuthenticated, logout } = useAuthStore();
+    const { isAuthenticated, token, logout } = useAuthStore();
     const { boards, fetchBoards } = useBoardStore();
     
-    console.log('CreateBoard: isAuthenticated:', isAuthenticated);
+    console.log('CreateBoard component mounted');
+    console.log('CreateBoard: Auth state in CreateBoard:', isAuthenticated ? 'Authenticated' : 'Not Authenticated');
+    console.log('CreateBoard: Token in CreateBoard:', token ? token : 'No token');
     console.log('CreateBoard: boards:', boards);
     
     // Load existing boards
@@ -40,6 +42,21 @@ const CreateBoard: React.FC = () => {
             return;
         }
 
+        console.log('CreateBoard: Attempting to create board with name:', boardName);
+        console.log('CreateBoard: Auth state:', isAuthenticated ? 'Authenticated' : 'Not Authenticated');
+        console.log('CreateBoard: Token for board creation:', token);
+        
+        // Additional debugging for token
+        console.log('CreateBoard: Token for board creation (raw):', token);
+        
+        // Check if we have authentication
+        if (!token) {
+            console.log('CreateBoard: No authentication token found in store or cookies!');
+            setError('Authentication error: No token found. Please log in again.');
+            setLoading(false);
+            return;
+        }
+        
         try {
             const data = await createBoard(boardName);
             

@@ -51,7 +51,7 @@ app.use((0, cors_1.default)({
 app.use(require('cookie-parser')());
 app.use(express_1.default.json());
 // Serve static files from the React app
-const staticPath = path_1.default.join(__dirname, '../frontend/build');
+const staticPath = path_1.default.join(__dirname, '../src/frontend/build');
 console.log('Static files path:', staticPath);
 app.use(express_1.default.static(staticPath));
 // Setup check middleware

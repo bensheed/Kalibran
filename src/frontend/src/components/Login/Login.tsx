@@ -26,15 +26,28 @@ const Login: React.FC = () => {
         setLoading(true);
 
         try {
+            console.log('--- Login Attempt (Frontend) ---');
+            console.log('PIN entered:', pin);
+            
+            console.log('Sending login request to backend...');
             const data = await loginUser(pin);
+            
+            console.log('Response status: 200');
+            console.log('Response data:', data);
             
             // Show success message briefly
             setSuccess('Login successful! Redirecting...');
+            console.log('Login successful on frontend with token:', data.token);
             
             // Update auth state
             login(data.token);
             
+            // Check auth state after login
+            console.log('Auth state after login:', isAuthenticated ? 'Authenticated' : 'Not Authenticated');
+            console.log('Token stored:', useAuthStore.getState().token);
+            
             // Navigate after a brief delay to show success message
+            console.log('Navigating to /create-board');
             setTimeout(() => {
                 navigate('/create-board');
             }, 1000);
