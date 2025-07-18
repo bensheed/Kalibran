@@ -47,6 +47,13 @@ const staticPath = process.env.NODE_ENV === 'production'
     ? '/app/src/frontend/build'
     : path.join(__dirname, '../../src/frontend/build');
 console.log('Static files path:', staticPath);
+
+// Debug middleware to log all requests
+app.use((req, res, next) => {
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.url}`);
+    next();
+});
+
 app.use(express.static(staticPath));
 
 // Setup check middleware
@@ -98,7 +105,10 @@ app.use('/api/login', authRoutes);
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
-  res.sendFile(path.join(__dirname, '../src/frontend/build/index.html'));
+  const indexPath = process.env.NODE_ENV === 'production' 
+    ? '/app/src/frontend/build/index.html'
+    : path.join(__dirname, '../../src/frontend/build/index.html');
+  res.sendFile(indexPath);
 });
 
 server.listen(port, () => {
