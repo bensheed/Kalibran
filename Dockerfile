@@ -24,6 +24,7 @@ RUN npm install --production
 COPY --from=backend-builder /app/dist ./dist
 COPY --from=frontend-builder /app/frontend/build ./src/frontend/build
 COPY database ./database
+ENV NODE_ENV=production
 EXPOSE 3001
 CMD ["node", "dist/index.js"]
 

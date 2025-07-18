@@ -43,9 +43,12 @@ app.use(express.json());
 
 // Serve static files from the React app
 // Use absolute path for Docker compatibility
-const staticPath = process.env.NODE_ENV === 'production' 
-    ? '/app/src/frontend/build'
-    : path.join(__dirname, '../../src/frontend/build');
+const fs = require('fs');
+const dockerStaticPath = '/app/src/frontend/build';
+const devStaticPath = path.join(__dirname, '../../src/frontend/build');
+
+// Check if Docker path exists, otherwise use development path
+const staticPath = fs.existsSync(dockerStaticPath) ? dockerStaticPath : devStaticPath;
 console.log('Static files path:', staticPath);
 
 // Debug middleware to log all requests
@@ -105,9 +108,12 @@ app.use('/api/login', authRoutes);
 // The "catchall" handler: for any request that doesn't
 // match one above, send back React's index.html file.
 app.get('*', (req, res) => {
-  const indexPath = process.env.NODE_ENV === 'production' 
-    ? '/app/src/frontend/build/index.html'
-    : path.join(__dirname, '../../src/frontend/build/index.html');
+  const dockerIndexPath = '/app/src/frontend/build/index.html';
+  const devIndexPath = path.join(__dirname, '../../src/frontend/build/index.html');
+  
+  // Check if Docker path exists, otherwise use development path
+  const indexPath = fs.existsSync(dockerIndexPath) ? dockerIndexPath : devIndexPath;
+  console.log('Serving index.html from:', indexPath);
   res.sendFile(indexPath);
 });
 
