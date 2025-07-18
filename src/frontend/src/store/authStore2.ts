@@ -63,47 +63,53 @@ export const useAuthStore2 = create<AuthState>((set, get) => {
             console.log('[AUTH2] Starting login with token:', token);
             console.log('[AUTH2] Token type:', typeof token);
             console.log('[AUTH2] Token length:', token ? token.length : 'null/undefined');
-            console.log('[AUTH2] Current state before set:', get());
-            console.log('[AUTH2] set function type in login:', typeof set);
+            
+            if (!token) {
+                console.error('[AUTH2] No token provided to login function!');
+                return;
+            }
             
             try {
-                // Try setting just the token first
-                console.log('[AUTH2] Setting token only first...');
-                set({ token });
-                
-                let currentState = get();
-                console.log('[AUTH2] State after setting token only:', currentState);
-                
-                // Now set isAuthenticated
-                console.log('[AUTH2] Setting isAuthenticated to true...');
-                set({ isAuthenticated: true });
-                
-                currentState = get();
-                console.log('[AUTH2] State after setting isAuthenticated:', currentState);
-                
-                // Now set both together to be sure
-                console.log('[AUTH2] Setting both together...');
+                // Set both values together in a single call
+                console.log('[AUTH2] Setting both isAuthenticated and token...');
                 set({ isAuthenticated: true, token });
                 
                 // Verify the state was set correctly
-                currentState = get();
+                const currentState = get();
                 console.log('[AUTH2] Final state after set:', currentState);
                 console.log('[AUTH2] Final isAuthenticated:', currentState.isAuthenticated);
                 console.log('[AUTH2] Final token:', currentState.token);
                 console.log('[AUTH2] Final token type:', typeof currentState.token);
                 
+                // Verify token is actually stored
+                if (currentState.token !== token) {
+                    console.error('[AUTH2] TOKEN MISMATCH! Expected:', token, 'Got:', currentState.token);
+                }
+                
                 // Set the token in a cookie for API requests
-                document.cookie = `session_id=${token}; path=/; max-age=86400`;
-                console.log('[AUTH2] Cookie set:', document.cookie);
+                document.cookie = `session_id=${token}; path=/; max-age=86400; SameSite=Lax`;
+                console.log('[AUTH2] Cookie set with token:', token);
                 
                 // Also store in localStorage as a backup
                 try {
                     localStorage.setItem('isAuthenticated', 'true');
                     localStorage.setItem('authToken', token);
-                    console.log('[AUTH2] localStorage updated');
+                    console.log('[AUTH2] localStorage updated with token:', token);
+                    
+                    // Verify localStorage
+                    const storedToken = localStorage.getItem('authToken');
+                    console.log('[AUTH2] Verified localStorage token:', storedToken);
                 } catch (e) {
                     console.error('[AUTH2] Failed to store auth state in localStorage:', e);
                 }
+                
+                // Final verification
+                setTimeout(() => {
+                    const finalState = get();
+                    console.log('[AUTH2] Final verification - state:', finalState);
+                    console.log('[AUTH2] Final verification - token still there:', finalState.token === token);
+                }, 100);
+                
             } catch (error) {
                 console.error('[AUTH2] Error in login function:', error);
                 throw error;
@@ -131,18 +137,27 @@ export const useAuthStore2 = create<AuthState>((set, get) => {
             const cookieToken = getTokenFromCookie();
             const storageToken = getTokenFromStorage();
             
+            console.log('[AUTH2] Cookie token:', cookieToken);
+            console.log('[AUTH2] Storage token:', storageToken);
+            
             const token = cookieToken || storageToken;
             
             if (token) {
-                console.log('[AUTH2] Found existing token, restoring auth');
+                console.log('[AUTH2] Found existing token, restoring auth with token:', token);
                 set({ isAuthenticated: true, token });
                 
                 // Ensure cookie is set if we got token from localStorage
                 if (!cookieToken && storageToken) {
-                    document.cookie = `session_id=${token}; path=/; max-age=86400`;
+                    document.cookie = `session_id=${token}; path=/; max-age=86400; SameSite=Lax`;
+                    console.log('[AUTH2] Set cookie from localStorage token');
                 }
+                
+                // Verify the state was set
+                const currentState = get();
+                console.log('[AUTH2] State after initialization:', currentState);
+                
             } else {
-                console.log('[AUTH2] No existing token found');
+                console.log('[AUTH2] No existing token found, setting unauthenticated');
                 set({ isAuthenticated: false, token: null });
             }
         }

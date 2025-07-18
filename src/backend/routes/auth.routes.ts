@@ -38,7 +38,8 @@ router.post('/', async (req: Request, res: Response): Promise<void> => {
         const sessionId = `sess_${Date.now()}_${Math.random()}`;
         
         // Store the session in the shared session service
-        createSession(sessionId, 1, 'admin');
+        await createSession(sessionId, 1, 'admin');
+        console.log('Session created successfully:', sessionId);
         
         // Set a cookie for the session
         res.cookie('session_id', sessionId, {

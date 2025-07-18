@@ -14,7 +14,7 @@ const CreateBoard: React.FC = () => {
     const [success, setSuccess] = useState('');
     const [loading, setLoading] = useState(false);
     const navigate = useNavigate();
-    const { isAuthenticated } = useAuthStore();
+    const { isAuthenticated, logout } = useAuthStore();
     const { boards, fetchBoards } = useBoardStore();
     
     console.log('CreateBoard: isAuthenticated:', isAuthenticated);
@@ -87,10 +87,25 @@ const CreateBoard: React.FC = () => {
                             Settings
                         </Link>
                     )}
-                    <Link to="/login" className="nav-button">
-                        <span className="nav-icon">👤</span>
-                        Admin Login
-                    </Link>
+                    {isAuthenticated ? (
+                        <button 
+                            onClick={() => {
+                                console.log('Logout button clicked');
+                                logout();
+                                window.location.reload(); // Force page reload to clear state
+                            }} 
+                            className="nav-button"
+                            style={{ background: 'none', border: 'none', cursor: 'pointer' }}
+                        >
+                            <span className="nav-icon">🚪</span>
+                            Logout
+                        </button>
+                    ) : (
+                        <Link to="/login" className="nav-button">
+                            <span className="nav-icon">👤</span>
+                            Admin Login
+                        </Link>
+                    )}
                 </div>
 
                 {/* Main Content */}

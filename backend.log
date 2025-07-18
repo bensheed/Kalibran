@@ -1,20 +1,25 @@
 Static files path: /workspace/Kalibran/src/frontend/build
 Server is running on http://localhost:3001
-Received setup request: { pin: '4444' }
-Validation failed: Invalid PIN
-Received setup request: { pin: '4444' }
-Validation failed: Invalid PIN
-Received setup request: { pin: '44444' }
-Validation failed: Invalid PIN
 === LOGIN ROUTE HIT ===
 Login route hit with body: { pin: '4444' }
 Content-Type: application/json
 Request headers: {
   host: 'localhost:3001',
-  'user-agent': 'curl/7.88.1',
-  accept: '*/*',
+  connection: 'keep-alive',
+  'content-length': '14',
+  'sec-ch-ua-platform': '"Linux"',
+  'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/136.0.7103.25 Safari/537.36',
+  accept: 'application/json, text/plain, */*',
+  'sec-ch-ua': '"Chromium";v="136", "HeadlessChrome";v="136", "Not.A/Brand";v="99"',
   'content-type': 'application/json',
-  'content-length': '14'
+  'sec-ch-ua-mobile': '?0',
+  origin: 'http://localhost:3001',
+  'sec-fetch-site': 'same-origin',
+  'sec-fetch-mode': 'cors',
+  'sec-fetch-dest': 'empty',
+  referer: 'http://localhost:3001/login',
+  'accept-encoding': 'gzip, deflate, br, zstd',
+  cookie: 'session_id=sess_1752799130130_0.8062228169271617'
 }
 Request method: POST
 Request URL: /
@@ -23,82 +28,15 @@ Request query: {}
 Request params: {}
 Stored hashed PIN: $2b$10$bUn27zGnV4UrHIm1BqBNrO3yKcR8mbmKXOooBaJhw/glMqIxqZdOq Entered PIN: 4444
 PIN matched, creating session
-[SESSION] Session created: sess_1752800603662_0.8531196525160856 Total sessions: 1
-Sending successful response with token: sess_1752800603662_0.8531196525160856
-=== LOGIN ROUTE HIT ===
-Login route hit with body: { pin: '4444' }
-Content-Type: application/json
-Request headers: {
-  host: 'localhost:3001',
-  'user-agent': 'curl/7.88.1',
-  accept: '*/*',
-  'content-type': 'application/json',
-  'content-length': '14'
-}
-Request method: POST
-Request URL: /
-Request path: /
-Request query: {}
-Request params: {}
-Stored hashed PIN: $2b$10$bUn27zGnV4UrHIm1BqBNrO3yKcR8mbmKXOooBaJhw/glMqIxqZdOq Entered PIN: 4444
-PIN matched, creating session
-[SESSION] Session created: sess_1752800608997_0.9773983801256945 Total sessions: 2
-Sending successful response with token: sess_1752800608997_0.9773983801256945
+[SESSION] Session created in database: sess_1752804491232_0.7531166057315319
+Session created successfully: sess_1752804491232_0.7531166057315319
+Sending successful response with token: sess_1752804491232_0.7531166057315319
 Auth middleware - Authorization header: Bearer sess_175...
 Auth middleware - Checking token: sess_17528...
-[SESSION] Session lookup for sess_1752800603662_0.8531196525160856 : Found
-[SESSION] Active sessions: 2
-[SESSION] Active session IDs: [
-  'sess_1752800603662_0.8531196525160856',
-  'sess_1752800608997_0.9773983801256945'
-]
+[SESSION] Session found in database: sess_1752804491232_0.7531166057315319
 Auth middleware - Session found: { userId: 1, role: 'admin' }
 Auth middleware - Authorization successful
-Creating new board - Request body: { name: 'Test Board from API' }
-Auth headers: Bearer sess_1752800603662_0.8531196525160856
-Creating board with name: Test Board from API
-Board created successfully: { id: 5, name: 'Test Board from API', card_layout_config: {} }
-Auth middleware - Authorization header: Bearer sess_175...
-Auth middleware - Checking token: sess_17528...
-[SESSION] Session lookup for sess_1752800603662_0.8531196525160856 : Found
-[SESSION] Active sessions: 2
-[SESSION] Active session IDs: [
-  'sess_1752800603662_0.8531196525160856',
-  'sess_1752800608997_0.9773983801256945'
-]
-Auth middleware - Session found: { userId: 1, role: 'admin' }
-Auth middleware - Authorization successful
-Creating new board - Request body: { name: 'Test Board from API' }
-Auth headers: Bearer sess_1752800603662_0.8531196525160856
-Creating board with name: Test Board from API
-Board created successfully: { id: 6, name: 'Test Board from API', card_layout_config: {} }
-Auth middleware - Authorization header: Bearer sess_175...
-Auth middleware - Checking token: sess_17527...
-[SESSION] Session lookup for sess_1752799130130_0.8062228169271617 : Not found
-[SESSION] Active sessions: 2
-[SESSION] Active session IDs: [
-  'sess_1752800603662_0.8531196525160856',
-  'sess_1752800608997_0.9773983801256945'
-]
-Auth middleware - Token not found in active sessions
-Auth middleware - Received token: sess_1752799130130_0.8062228169271617
-Auth middleware - Authorization header: Bearer sess_175...
-Auth middleware - Checking token: sess_17527...
-[SESSION] Session lookup for sess_1752799130130_0.8062228169271617 : Not found
-[SESSION] Active sessions: 2
-[SESSION] Active session IDs: [
-  'sess_1752800603662_0.8531196525160856',
-  'sess_1752800608997_0.9773983801256945'
-]
-Auth middleware - Token not found in active sessions
-Auth middleware - Received token: sess_1752799130130_0.8062228169271617
-Auth middleware - Authorization header: Bearer sess_175...
-Auth middleware - Checking token: sess_17527...
-[SESSION] Session lookup for sess_1752799130130_0.8062228169271617 : Not found
-[SESSION] Active sessions: 2
-[SESSION] Active session IDs: [
-  'sess_1752800603662_0.8531196525160856',
-  'sess_1752800608997_0.9773983801256945'
-]
-Auth middleware - Token not found in active sessions
-Auth middleware - Received token: sess_1752799130130_0.8062228169271617
+Creating new board - Request body: { name: 'Test Authentication Fix' }
+Auth headers: Bearer sess_1752804491232_0.7531166057315319
+Creating board with name: Test Authentication Fix
+Board created successfully: { id: 7, name: 'Test Authentication Fix', card_layout_config: {} }
