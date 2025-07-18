@@ -9,7 +9,7 @@ const Login: React.FC = () => {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [success, setSuccess] = useState('');
-    const { login, isAuthenticated } = useAuthStore();
+    const { login, isAuthenticated, token } = useAuthStore();
     const navigate = useNavigate();
 
     // Redirect if already authenticated
@@ -18,6 +18,11 @@ const Login: React.FC = () => {
             navigate('/create-board');
         }
     }, [isAuthenticated, navigate]);
+
+    // Monitor token changes for debugging
+    useEffect(() => {
+        console.log('Login: Token changed to:', token);
+    }, [token]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -42,9 +47,15 @@ const Login: React.FC = () => {
             // Update auth state
             login(data.token);
             
-            // Check auth state after login
-            console.log('Auth state after login:', isAuthenticated ? 'Authenticated' : 'Not Authenticated');
-            console.log('Token stored:', useAuthStore.getState().token);
+            // Check auth state after login with a small delay to allow state to update
+            setTimeout(() => {
+                const currentState = useAuthStore.getState();
+                console.log('Auth state after login:', isAuthenticated ? 'Authenticated' : 'Not Authenticated');
+                console.log('Token stored (hook):', token);
+                console.log('Token stored (getState):', currentState.token);
+                console.log('isAuthenticated (hook):', isAuthenticated);
+                console.log('isAuthenticated (getState):', currentState.isAuthenticated);
+            }, 100);
             
             // Navigate after a brief delay to show success message
             console.log('Navigating to /create-board');
