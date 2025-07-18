@@ -42,7 +42,9 @@ app.use(require('cookie-parser')());
 app.use(express.json());
 
 // Serve static files from the React app
-app.use(express.static(path.join(__dirname, '../src/frontend/build')));
+const staticPath = path.join(__dirname, '../src/frontend/build');
+console.log('Static files path:', staticPath);
+app.use(express.static(staticPath));
 
 // Setup check middleware
 const checkSetup: express.RequestHandler = async (req, res, next) => {

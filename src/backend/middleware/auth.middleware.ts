@@ -34,7 +34,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
 
         if (match) {
             const sessionId = `sess_${Date.now()}_${Math.random()}`;
-            createSession(sessionId, 1, 'admin');
+            await createSession(sessionId, 1, 'admin');
             console.log('Authentication successful. Session created:', sessionId);
 
             // Set a cookie for the session
@@ -58,7 +58,7 @@ export const authenticate = async (req: Request, res: Response, next: NextFuncti
     }
 };
 
-export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
+export const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
     const authHeader = req.headers.authorization;
     console.log('Auth middleware - Authorization header:', authHeader ? `${authHeader.substring(0, 15)}...` : 'Missing');
     
@@ -71,7 +71,7 @@ export const isAdmin = (req: Request, res: Response, next: NextFunction) => {
         return res.status(401).json({ message: 'Unauthorized: No token provided.' });
     }
     
-    const session = getSession(token);
+    const session = await getSession(token);
     if (!session) {
         console.log('Auth middleware - Token not found in active sessions');
         console.log('Auth middleware - Received token:', token);

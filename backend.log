@@ -1,358 +1,11 @@
+Static files path: /workspace/Kalibran/src/frontend/build
 Server is running on http://localhost:3001
-Received setup request: {
-  adminPin: '4444',
-  dbType: 'ProCal',
-  dbHost: '192.168.1.166',
-  dbPort: 1433,
-  dbUser: 'readonly',
-  dbPassword: 'readonly',
-  dbName: 'ProCal'
-}
-Connecting to external database to test connection...
-(node:38241) [DEP0123] DeprecationWarning: Setting the TLS ServerName to an IP address is not permitted by RFC 6066. This will be ignored in a future version.
-(Use `node --trace-deprecation ...` to show where the warning was created)
-External database connection successful.
-Connecting to internal database to save settings...
-Setup failed during internal database operation: error: must be owner of view kanban_cards_view
-    at /workspace/Kalibran/node_modules/pg/lib/client.js:545:17
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
-  length: 99,
-  severity: 'ERROR',
-  code: '42501',
-  detail: undefined,
-  hint: undefined,
-  position: undefined,
-  internalPosition: undefined,
-  internalQuery: undefined,
-  where: undefined,
-  schema: undefined,
-  table: undefined,
-  column: undefined,
-  dataType: undefined,
-  constraint: undefined,
-  file: 'aclchk.c',
-  line: '3793',
-  routine: 'aclcheck_error'
-}
-Setup failed: error: must be owner of view kanban_cards_view
-    at /workspace/Kalibran/node_modules/pg/lib/client.js:545:17
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
-  length: 99,
-  severity: 'ERROR',
-  code: '42501',
-  detail: undefined,
-  hint: undefined,
-  position: undefined,
-  internalPosition: undefined,
-  internalQuery: undefined,
-  where: undefined,
-  schema: undefined,
-  table: undefined,
-  column: undefined,
-  dataType: undefined,
-  constraint: undefined,
-  file: 'aclchk.c',
-  line: '3793',
-  routine: 'aclcheck_error'
-}
-Received setup request: {
-  adminPin: '4444',
-  dbType: 'ProCal',
-  dbHost: '192.168.1.166',
-  dbPort: 1433,
-  dbUser: 'readonly',
-  dbPassword: 'readonly',
-  dbName: 'ProCal'
-}
-Connecting to external database to test connection...
-External database connection successful.
-Connecting to internal database to save settings...
-Setup failed during internal database operation: error: must be owner of view kanban_cards_view
-    at /workspace/Kalibran/node_modules/pg/lib/client.js:545:17
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
-  length: 99,
-  severity: 'ERROR',
-  code: '42501',
-  detail: undefined,
-  hint: undefined,
-  position: undefined,
-  internalPosition: undefined,
-  internalQuery: undefined,
-  where: undefined,
-  schema: undefined,
-  table: undefined,
-  column: undefined,
-  dataType: undefined,
-  constraint: undefined,
-  file: 'aclchk.c',
-  line: '3793',
-  routine: 'aclcheck_error'
-}
-Setup failed: error: must be owner of view kanban_cards_view
-    at /workspace/Kalibran/node_modules/pg/lib/client.js:545:17
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
-  length: 99,
-  severity: 'ERROR',
-  code: '42501',
-  detail: undefined,
-  hint: undefined,
-  position: undefined,
-  internalPosition: undefined,
-  internalQuery: undefined,
-  where: undefined,
-  schema: undefined,
-  table: undefined,
-  column: undefined,
-  dataType: undefined,
-  constraint: undefined,
-  file: 'aclchk.c',
-  line: '3793',
-  routine: 'aclcheck_error'
-}
-Received setup request: {
-  adminPin: '4444',
-  dbType: 'ProCal',
-  dbHost: '192.168.1.166',
-  dbPort: 1433,
-  dbUser: 'readonly',
-  dbPassword: 'readonly',
-  dbName: 'ProCal'
-}
-Connecting to external database to test connection...
-External database connection successful.
-Connecting to internal database to save settings...
-Setup failed during internal database operation: error: must be owner of view kanban_cards_view
-    at /workspace/Kalibran/node_modules/pg/lib/client.js:545:17
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
-  length: 99,
-  severity: 'ERROR',
-  code: '42501',
-  detail: undefined,
-  hint: undefined,
-  position: undefined,
-  internalPosition: undefined,
-  internalQuery: undefined,
-  where: undefined,
-  schema: undefined,
-  table: undefined,
-  column: undefined,
-  dataType: undefined,
-  constraint: undefined,
-  file: 'aclchk.c',
-  line: '3793',
-  routine: 'aclcheck_error'
-}
-Setup failed: error: must be owner of view kanban_cards_view
-    at /workspace/Kalibran/node_modules/pg/lib/client.js:545:17
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
-  length: 99,
-  severity: 'ERROR',
-  code: '42501',
-  detail: undefined,
-  hint: undefined,
-  position: undefined,
-  internalPosition: undefined,
-  internalQuery: undefined,
-  where: undefined,
-  schema: undefined,
-  table: undefined,
-  column: undefined,
-  dataType: undefined,
-  constraint: undefined,
-  file: 'aclchk.c',
-  line: '3793',
-  routine: 'aclcheck_error'
-}
-Received setup request: {
-  adminPin: '4444',
-  dbType: 'ProCal',
-  dbHost: '192.168.1.166',
-  dbPort: 1433,
-  dbUser: 'readonly',
-  dbPassword: 'readonly',
-  dbName: 'ProCal'
-}
-Connecting to external database to test connection...
-External database connection successful.
-Connecting to internal database to save settings...
-Setup failed during internal database operation: error: must be owner of view kanban_cards_view
-    at /workspace/Kalibran/node_modules/pg/lib/client.js:545:17
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
-  length: 99,
-  severity: 'ERROR',
-  code: '42501',
-  detail: undefined,
-  hint: undefined,
-  position: undefined,
-  internalPosition: undefined,
-  internalQuery: undefined,
-  where: undefined,
-  schema: undefined,
-  table: undefined,
-  column: undefined,
-  dataType: undefined,
-  constraint: undefined,
-  file: 'aclchk.c',
-  line: '3793',
-  routine: 'aclcheck_error'
-}
-Setup failed: error: must be owner of view kanban_cards_view
-    at /workspace/Kalibran/node_modules/pg/lib/client.js:545:17
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
-  length: 99,
-  severity: 'ERROR',
-  code: '42501',
-  detail: undefined,
-  hint: undefined,
-  position: undefined,
-  internalPosition: undefined,
-  internalQuery: undefined,
-  where: undefined,
-  schema: undefined,
-  table: undefined,
-  column: undefined,
-  dataType: undefined,
-  constraint: undefined,
-  file: 'aclchk.c',
-  line: '3793',
-  routine: 'aclcheck_error'
-}
-Received setup request: {
-  adminPin: '4444',
-  dbType: 'ProCal',
-  dbHost: '192.168.1.166',
-  dbPort: 1433,
-  dbUser: 'readonly',
-  dbPassword: 'readonly',
-  dbName: 'ProCal'
-}
-Connecting to external database to test connection...
-External database connection successful.
-Connecting to internal database to save settings...
-Setup failed during internal database operation: error: must be owner of table column_transitions
-    at /workspace/Kalibran/node_modules/pg/lib/client.js:545:17
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
-  length: 101,
-  severity: 'ERROR',
-  code: '42501',
-  detail: undefined,
-  hint: undefined,
-  position: undefined,
-  internalPosition: undefined,
-  internalQuery: undefined,
-  where: undefined,
-  schema: undefined,
-  table: undefined,
-  column: undefined,
-  dataType: undefined,
-  constraint: undefined,
-  file: 'aclchk.c',
-  line: '3793',
-  routine: 'aclcheck_error'
-}
-Setup failed: error: must be owner of table column_transitions
-    at /workspace/Kalibran/node_modules/pg/lib/client.js:545:17
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
-  length: 101,
-  severity: 'ERROR',
-  code: '42501',
-  detail: undefined,
-  hint: undefined,
-  position: undefined,
-  internalPosition: undefined,
-  internalQuery: undefined,
-  where: undefined,
-  schema: undefined,
-  table: undefined,
-  column: undefined,
-  dataType: undefined,
-  constraint: undefined,
-  file: 'aclchk.c',
-  line: '3793',
-  routine: 'aclcheck_error'
-}
-Received setup request: {
-  adminPin: '4444',
-  dbType: 'ProCal',
-  dbHost: '192.168.1.166',
-  dbPort: 1433,
-  dbUser: 'readonly',
-  dbPassword: 'readonly',
-  dbName: 'ProCal'
-}
-Connecting to external database to test connection...
-External database connection successful.
-Connecting to internal database to save settings...
-Setup failed during internal database operation: error: must be owner of table column_transitions
-    at /workspace/Kalibran/node_modules/pg/lib/client.js:545:17
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
-  length: 101,
-  severity: 'ERROR',
-  code: '42501',
-  detail: undefined,
-  hint: undefined,
-  position: undefined,
-  internalPosition: undefined,
-  internalQuery: undefined,
-  where: undefined,
-  schema: undefined,
-  table: undefined,
-  column: undefined,
-  dataType: undefined,
-  constraint: undefined,
-  file: 'aclchk.c',
-  line: '3793',
-  routine: 'aclcheck_error'
-}
-Setup failed: error: must be owner of table column_transitions
-    at /workspace/Kalibran/node_modules/pg/lib/client.js:545:17
-    at process.processTicksAndRejections (node:internal/process/task_queues:105:5) {
-  length: 101,
-  severity: 'ERROR',
-  code: '42501',
-  detail: undefined,
-  hint: undefined,
-  position: undefined,
-  internalPosition: undefined,
-  internalQuery: undefined,
-  where: undefined,
-  schema: undefined,
-  table: undefined,
-  column: undefined,
-  dataType: undefined,
-  constraint: undefined,
-  file: 'aclchk.c',
-  line: '3793',
-  routine: 'aclcheck_error'
-}
-Received setup request: {
-  adminPin: '4444',
-  dbType: 'ProCal',
-  dbHost: '192.168.1.166',
-  dbPort: 1433,
-  dbUser: 'readonly',
-  dbPassword: 'readonly',
-  dbName: 'ProCal'
-}
-Connecting to external database to test connection...
-External database connection successful.
-Connecting to internal database to save settings...
-Internal database initialization script executed successfully.
-Configuration saved and setup complete.
-Received setup request: {
-  adminPin: '4444',
-  dbType: 'ProCal',
-  dbHost: '192.168.1.166',
-  dbPort: 1433,
-  dbUser: 'readonly',
-  dbPassword: 'readonly',
-  dbName: 'ProCal'
-}
-Connecting to external database to test connection...
-External database connection successful.
-Connecting to internal database to save settings...
-Internal database initialization script executed successfully.
-Configuration saved and setup complete.
+Received setup request: { pin: '4444' }
+Validation failed: Invalid PIN
+Received setup request: { pin: '4444' }
+Validation failed: Invalid PIN
+Received setup request: { pin: '44444' }
+Validation failed: Invalid PIN
 === LOGIN ROUTE HIT ===
 Login route hit with body: { pin: '4444' }
 Content-Type: application/json
@@ -368,9 +21,10 @@ Request URL: /
 Request path: /
 Request query: {}
 Request params: {}
-Stored hashed PIN: $2b$10$3ldU1EQI1eBo.Dp.Fz7rUeBPA1/EOE1/P3mk.to0HP/RAVMXuUO9e Entered PIN: 4444
+Stored hashed PIN: $2b$10$bUn27zGnV4UrHIm1BqBNrO3yKcR8mbmKXOooBaJhw/glMqIxqZdOq Entered PIN: 4444
 PIN matched, creating session
-Sending successful response with token: sess_1752793681982_0.7013578787267829
+[SESSION] Session created: sess_1752800603662_0.8531196525160856 Total sessions: 1
+Sending successful response with token: sess_1752800603662_0.8531196525160856
 === LOGIN ROUTE HIT ===
 Login route hit with body: { pin: '4444' }
 Content-Type: application/json
@@ -386,311 +40,65 @@ Request URL: /
 Request path: /
 Request query: {}
 Request params: {}
-Stored hashed PIN: $2b$10$3ldU1EQI1eBo.Dp.Fz7rUeBPA1/EOE1/P3mk.to0HP/RAVMXuUO9e Entered PIN: 4444
+Stored hashed PIN: $2b$10$bUn27zGnV4UrHIm1BqBNrO3yKcR8mbmKXOooBaJhw/glMqIxqZdOq Entered PIN: 4444
 PIN matched, creating session
-Sending successful response with token: sess_1752793684721_0.34446589456127175
+[SESSION] Session created: sess_1752800608997_0.9773983801256945 Total sessions: 2
+Sending successful response with token: sess_1752800608997_0.9773983801256945
+Auth middleware - Authorization header: Bearer sess_175...
+Auth middleware - Checking token: sess_17528...
+[SESSION] Session lookup for sess_1752800603662_0.8531196525160856 : Found
+[SESSION] Active sessions: 2
+[SESSION] Active session IDs: [
+  'sess_1752800603662_0.8531196525160856',
+  'sess_1752800608997_0.9773983801256945'
+]
+Auth middleware - Session found: { userId: 1, role: 'admin' }
+Auth middleware - Authorization successful
+Creating new board - Request body: { name: 'Test Board from API' }
+Auth headers: Bearer sess_1752800603662_0.8531196525160856
+Creating board with name: Test Board from API
+Board created successfully: { id: 5, name: 'Test Board from API', card_layout_config: {} }
+Auth middleware - Authorization header: Bearer sess_175...
+Auth middleware - Checking token: sess_17528...
+[SESSION] Session lookup for sess_1752800603662_0.8531196525160856 : Found
+[SESSION] Active sessions: 2
+[SESSION] Active session IDs: [
+  'sess_1752800603662_0.8531196525160856',
+  'sess_1752800608997_0.9773983801256945'
+]
+Auth middleware - Session found: { userId: 1, role: 'admin' }
+Auth middleware - Authorization successful
+Creating new board - Request body: { name: 'Test Board from API' }
+Auth headers: Bearer sess_1752800603662_0.8531196525160856
+Creating board with name: Test Board from API
+Board created successfully: { id: 6, name: 'Test Board from API', card_layout_config: {} }
 Auth middleware - Authorization header: Bearer sess_175...
 Auth middleware - Checking token: sess_17527...
-Auth middleware - Active sessions: 0
-Auth middleware - Active session IDs: []
+[SESSION] Session lookup for sess_1752799130130_0.8062228169271617 : Not found
+[SESSION] Active sessions: 2
+[SESSION] Active session IDs: [
+  'sess_1752800603662_0.8531196525160856',
+  'sess_1752800608997_0.9773983801256945'
+]
 Auth middleware - Token not found in active sessions
-Auth middleware - Received token: sess_1752793681982_0.7013578787267829
-Auth middleware - Available tokens: []
+Auth middleware - Received token: sess_1752799130130_0.8062228169271617
 Auth middleware - Authorization header: Bearer sess_175...
 Auth middleware - Checking token: sess_17527...
-Auth middleware - Active sessions: 0
-Auth middleware - Active session IDs: []
+[SESSION] Session lookup for sess_1752799130130_0.8062228169271617 : Not found
+[SESSION] Active sessions: 2
+[SESSION] Active session IDs: [
+  'sess_1752800603662_0.8531196525160856',
+  'sess_1752800608997_0.9773983801256945'
+]
 Auth middleware - Token not found in active sessions
-Auth middleware - Received token: sess_1752793681982_0.7013578787267829
-Auth middleware - Available tokens: []
-=== LOGIN ROUTE HIT ===
-Login route hit with body: { pin: '4444' }
-Content-Type: application/json
-Request headers: {
-  host: 'localhost:3001',
-  'user-agent': 'curl/7.88.1',
-  accept: '*/*',
-  'content-type': 'application/json',
-  'content-length': '14'
-}
-Request method: POST
-Request URL: /
-Request path: /
-Request query: {}
-Request params: {}
-Stored hashed PIN: $2b$10$3ldU1EQI1eBo.Dp.Fz7rUeBPA1/EOE1/P3mk.to0HP/RAVMXuUO9e Entered PIN: 4444
-PIN matched, creating session
-Sending successful response with token: sess_1752793698839_0.0707176894504904
+Auth middleware - Received token: sess_1752799130130_0.8062228169271617
 Auth middleware - Authorization header: Bearer sess_175...
 Auth middleware - Checking token: sess_17527...
-Auth middleware - Active sessions: 0
-Auth middleware - Active session IDs: []
+[SESSION] Session lookup for sess_1752799130130_0.8062228169271617 : Not found
+[SESSION] Active sessions: 2
+[SESSION] Active session IDs: [
+  'sess_1752800603662_0.8531196525160856',
+  'sess_1752800608997_0.9773983801256945'
+]
 Auth middleware - Token not found in active sessions
-Auth middleware - Received token: sess_1752793698839_0.0707176894504904
-Auth middleware - Available tokens: []
-=== LOGIN ROUTE HIT ===
-Login route hit with body: { pin: '4444' }
-Content-Type: application/json
-Request headers: {
-  host: 'localhost:3001',
-  'user-agent': 'curl/7.88.1',
-  accept: '*/*',
-  'content-type': 'application/json',
-  'content-length': '14'
-}
-Request method: POST
-Request URL: /
-Request path: /
-Request query: {}
-Request params: {}
-Stored hashed PIN: $2b$10$3ldU1EQI1eBo.Dp.Fz7rUeBPA1/EOE1/P3mk.to0HP/RAVMXuUO9e Entered PIN: 4444
-PIN matched, creating session
-Sending successful response with token: sess_1752793701822_0.6611914501838043
-Auth middleware - Authorization header: Bearer sess_175...
-Auth middleware - Checking token: sess_17527...
-Auth middleware - Active sessions: 0
-Auth middleware - Active session IDs: []
-Auth middleware - Token not found in active sessions
-Auth middleware - Received token: sess_1752793701822_0.6611914501838043
-Auth middleware - Available tokens: []
-=== LOGIN ROUTE HIT ===
-Login route hit with body: { pin: '4444' }
-Content-Type: application/json
-Request headers: {
-  host: 'localhost:3001',
-  'user-agent': 'curl/7.88.1',
-  accept: '*/*',
-  'content-type': 'application/json',
-  'content-length': '14'
-}
-Request method: POST
-Request URL: /
-Request path: /
-Request query: {}
-Request params: {}
-Stored hashed PIN: $2b$10$3ldU1EQI1eBo.Dp.Fz7rUeBPA1/EOE1/P3mk.to0HP/RAVMXuUO9e Entered PIN: 4444
-PIN matched, creating session
-Sending successful response with token: sess_1752793707221_0.716398602462289
-=== LOGIN ROUTE HIT ===
-Login route hit with body: { pin: '4444' }
-Content-Type: application/json
-Request headers: {
-  host: 'localhost:3001',
-  'user-agent': 'curl/7.88.1',
-  accept: '*/*',
-  'content-type': 'application/json',
-  'content-length': '14'
-}
-Request method: POST
-Request URL: /
-Request path: /
-Request query: {}
-Request params: {}
-Stored hashed PIN: $2b$10$3ldU1EQI1eBo.Dp.Fz7rUeBPA1/EOE1/P3mk.to0HP/RAVMXuUO9e Entered PIN: 4444
-PIN matched, creating session
-Sending successful response with token: sess_1752793710812_0.1183823348991444
-Auth middleware - Authorization header: Bearer sess_175...
-Auth middleware - Checking token: sess_17527...
-Auth middleware - Active sessions: 0
-Auth middleware - Active session IDs: []
-Auth middleware - Token not found in active sessions
-Auth middleware - Received token: sess_1752793707221_0.716398602462289
-Auth middleware - Available tokens: []
-Auth middleware - Authorization header: Bearer sess_175...
-Auth middleware - Checking token: sess_17527...
-Auth middleware - Active sessions: 0
-Auth middleware - Active session IDs: []
-Auth middleware - Token not found in active sessions
-Auth middleware - Received token: sess_1752793707221_0.716398602462289
-Auth middleware - Available tokens: []
-=== LOGIN ROUTE HIT ===
-Login route hit with body: { pin: '4444' }
-Content-Type: application/json
-Request headers: {
-  host: 'localhost:3001',
-  connection: 'keep-alive',
-  'content-length': '14',
-  'sec-ch-ua-platform': '"Linux"',
-  'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/136.0.7103.25 Safari/537.36',
-  accept: 'application/json, text/plain, */*',
-  'sec-ch-ua': '"Chromium";v="136", "HeadlessChrome";v="136", "Not.A/Brand";v="99"',
-  'content-type': 'application/json',
-  'sec-ch-ua-mobile': '?0',
-  origin: 'http://localhost:3000',
-  'sec-fetch-site': 'same-site',
-  'sec-fetch-mode': 'cors',
-  'sec-fetch-dest': 'empty',
-  referer: 'http://localhost:3000/',
-  'accept-encoding': 'gzip, deflate, br, zstd'
-}
-Request method: POST
-Request URL: /
-Request path: /
-Request query: {}
-Request params: {}
-Stored hashed PIN: $2b$10$3ldU1EQI1eBo.Dp.Fz7rUeBPA1/EOE1/P3mk.to0HP/RAVMXuUO9e Entered PIN: 4444
-PIN matched, creating session
-Sending successful response with token: sess_1752793743513_0.941418092776489
-Auth middleware - Authorization header: Bearer sess_175...
-Auth middleware - Checking token: sess_17527...
-Auth middleware - Active sessions: 0
-Auth middleware - Active session IDs: []
-Auth middleware - Token not found in active sessions
-Auth middleware - Received token: sess_1752793743513_0.941418092776489
-Auth middleware - Available tokens: []
-Auth middleware - Authorization header: Bearer sess_175...
-Auth middleware - Checking token: sess_17527...
-Auth middleware - Active sessions: 0
-Auth middleware - Active session IDs: []
-Auth middleware - Token not found in active sessions
-Auth middleware - Received token: sess_1752793743513_0.941418092776489
-Auth middleware - Available tokens: []
-=== LOGIN ROUTE HIT ===
-Login route hit with body: { pin: '4444' }
-Content-Type: application/json
-Request headers: {
-  host: 'localhost:3001',
-  connection: 'keep-alive',
-  'content-length': '14',
-  'sec-ch-ua-platform': '"Linux"',
-  authorization: 'Bearer sess_1752793743513_0.941418092776489',
-  'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/136.0.7103.25 Safari/537.36',
-  accept: 'application/json, text/plain, */*',
-  'sec-ch-ua': '"Chromium";v="136", "HeadlessChrome";v="136", "Not.A/Brand";v="99"',
-  'content-type': 'application/json',
-  'sec-ch-ua-mobile': '?0',
-  origin: 'http://localhost:3000',
-  'sec-fetch-site': 'same-site',
-  'sec-fetch-mode': 'cors',
-  'sec-fetch-dest': 'empty',
-  referer: 'http://localhost:3000/',
-  'accept-encoding': 'gzip, deflate, br, zstd',
-  cookie: 'session_id=sess_1752793743513_0.941418092776489'
-}
-Request method: POST
-Request URL: /
-Request path: /
-Request query: {}
-Request params: {}
-Stored hashed PIN: $2b$10$3ldU1EQI1eBo.Dp.Fz7rUeBPA1/EOE1/P3mk.to0HP/RAVMXuUO9e Entered PIN: 4444
-PIN matched, creating session
-Sending successful response with token: sess_1752793923231_0.04578255348059823
-Auth middleware - Authorization header: Bearer sess_175...
-Auth middleware - Checking token: sess_17527...
-Auth middleware - Active sessions: 0
-Auth middleware - Active session IDs: []
-Auth middleware - Token not found in active sessions
-Auth middleware - Received token: sess_1752793923231_0.04578255348059823
-Auth middleware - Available tokens: []
-=== LOGIN ROUTE HIT ===
-Login route hit with body: { pin: '4444' }
-Content-Type: application/json
-Request headers: {
-  host: 'localhost:3001',
-  connection: 'keep-alive',
-  'content-length': '14',
-  'sec-ch-ua-platform': '"Linux"',
-  authorization: 'Bearer sess_1752793923231_0.04578255348059823',
-  'user-agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/136.0.7103.25 Safari/537.36',
-  accept: 'application/json, text/plain, */*',
-  'sec-ch-ua': '"Chromium";v="136", "HeadlessChrome";v="136", "Not.A/Brand";v="99"',
-  'content-type': 'application/json',
-  'sec-ch-ua-mobile': '?0',
-  origin: 'http://localhost:3000',
-  'sec-fetch-site': 'same-site',
-  'sec-fetch-mode': 'cors',
-  'sec-fetch-dest': 'empty',
-  referer: 'http://localhost:3000/',
-  'accept-encoding': 'gzip, deflate, br, zstd',
-  cookie: 'session_id=sess_1752793923231_0.04578255348059823'
-}
-Request method: POST
-Request URL: /
-Request path: /
-Request query: {}
-Request params: {}
-Stored hashed PIN: $2b$10$3ldU1EQI1eBo.Dp.Fz7rUeBPA1/EOE1/P3mk.to0HP/RAVMXuUO9e Entered PIN: 4444
-PIN matched, creating session
-Sending successful response with token: sess_1752793987148_0.11989186892225168
-Auth middleware - Authorization header: Bearer sess_175...
-Auth middleware - Checking token: sess_17527...
-Auth middleware - Active sessions: 0
-Auth middleware - Active session IDs: []
-Auth middleware - Token not found in active sessions
-Auth middleware - Received token: sess_1752793987148_0.11989186892225168
-Auth middleware - Available tokens: []
-=== LOGIN ROUTE HIT ===
-Login route hit with body: { pin: '4444' }
-Content-Type: application/json
-Request headers: {
-  host: 'localhost:3001',
-  'user-agent': 'curl/7.88.1',
-  accept: '*/*',
-  'content-type': 'application/json',
-  'content-length': '14'
-}
-Request method: POST
-Request URL: /
-Request path: /
-Request query: {}
-Request params: {}
-Stored hashed PIN: $2b$10$3ldU1EQI1eBo.Dp.Fz7rUeBPA1/EOE1/P3mk.to0HP/RAVMXuUO9e Entered PIN: 4444
-PIN matched, creating session
-Sending successful response with token: sess_1752794019425_0.1931904724291995
-=== LOGIN ROUTE HIT ===
-Login route hit with body: { pin: '4444' }
-Content-Type: application/json
-Request headers: {
-  host: 'localhost:3001',
-  'user-agent': 'curl/7.88.1',
-  accept: '*/*',
-  'content-type': 'application/json',
-  'content-length': '14'
-}
-Request method: POST
-Request URL: /
-Request path: /
-Request query: {}
-Request params: {}
-Stored hashed PIN: $2b$10$3ldU1EQI1eBo.Dp.Fz7rUeBPA1/EOE1/P3mk.to0HP/RAVMXuUO9e Entered PIN: 4444
-PIN matched, creating session
-Sending successful response with token: sess_1752794024788_0.6421410495651789
-Auth middleware - Authorization header: Bearer sess_175...
-Auth middleware - Checking token: sess_17527...
-Auth middleware - Active sessions: 0
-Auth middleware - Active session IDs: []
-Auth middleware - Token not found in active sessions
-Auth middleware - Received token: sess_1752794019425_0.1931904724291995
-Auth middleware - Available tokens: []
-Auth middleware - Authorization header: Bearer sess_175...
-Auth middleware - Checking token: sess_17527...
-Auth middleware - Active sessions: 0
-Auth middleware - Active session IDs: []
-Auth middleware - Token not found in active sessions
-Auth middleware - Received token: sess_1752794024788_0.6421410495651789
-Auth middleware - Available tokens: []
-=== LOGIN ROUTE HIT ===
-Login route hit with body: { pin: '4444' }
-Content-Type: application/json
-Request headers: {
-  host: 'localhost:3001',
-  'user-agent': 'curl/7.88.1',
-  accept: '*/*',
-  'content-type': 'application/json',
-  'content-length': '14'
-}
-Request method: POST
-Request URL: /
-Request path: /
-Request query: {}
-Request params: {}
-Stored hashed PIN: $2b$10$3ldU1EQI1eBo.Dp.Fz7rUeBPA1/EOE1/P3mk.to0HP/RAVMXuUO9e Entered PIN: 4444
-PIN matched, creating session
-Sending successful response with token: sess_1752794118038_0.6617933793399224
-Auth middleware - Authorization header: Bearer sess_175...
-Auth middleware - Checking token: sess_17527...
-Auth middleware - Active sessions: 0
-Auth middleware - Active session IDs: []
-Auth middleware - Token not found in active sessions
-Auth middleware - Received token: sess_1752794118038_0.6617933793399224
-Auth middleware - Available tokens: []
+Auth middleware - Received token: sess_1752799130130_0.8062228169271617

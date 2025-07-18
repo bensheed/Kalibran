@@ -1,3 +1,20 @@
+/* Kalibran Color Palette */
+:root {
+  --kalibran-off-white: #d5d7d9;
+  --kalibran-dark-grey: #2e3941;
+  --kalibran-medium-grey: #586167;
+  --kalibran-blue: #314C9F;
+  --kalibran-white: #ffffff;
+  --kalibran-light-grey: #f8f9fa;
+  --kalibran-border: #e1e5e9;
+  --kalibran-shadow: rgba(46, 57, 65, 0.1);
+  --kalibran-shadow-hover: rgba(46, 57, 65, 0.15);
+}
+
+* {
+  box-sizing: border-box;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
@@ -5,9 +22,104 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  background-color: var(--kalibran-off-white);
+  color: var(--kalibran-dark-grey);
+  line-height: 1.5;
 }
 
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
+}
+
+/* Global button styles */
+button {
+  font-family: inherit;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 500;
+}
+
+button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px var(--kalibran-shadow-hover);
+}
+
+button:active {
+  transform: translateY(0);
+}
+
+/* Primary button */
+.btn-primary {
+  background-color: var(--kalibran-blue);
+  color: white;
+  padding: 10px 20px;
+  font-size: 14px;
+}
+
+.btn-primary:hover {
+  background-color: #2a4085;
+}
+
+/* Secondary button */
+.btn-secondary {
+  background-color: var(--kalibran-medium-grey);
+  color: white;
+  padding: 8px 16px;
+  font-size: 13px;
+}
+
+.btn-secondary:hover {
+  background-color: #4a5459;
+}
+
+/* Icon button */
+.btn-icon {
+  background-color: var(--kalibran-white);
+  color: var(--kalibran-medium-grey);
+  padding: 8px;
+  border: 1px solid var(--kalibran-border);
+  border-radius: 4px;
+  min-width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-icon:hover {
+  background-color: var(--kalibran-light-grey);
+  border-color: var(--kalibran-medium-grey);
+}
+
+/* Input styles */
+input, select, textarea {
+  font-family: inherit;
+  border: 1px solid var(--kalibran-border);
+  border-radius: 4px;
+  padding: 8px 12px;
+  font-size: 14px;
+  background-color: var(--kalibran-white);
+  color: var(--kalibran-dark-grey);
+  transition: border-color 0.2s ease;
+}
+
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--kalibran-blue);
+  box-shadow: 0 0 0 2px rgba(49, 76, 159, 0.1);
+}
+
+/* Link styles */
+a {
+  color: var(--kalibran-blue);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: #2a4085;
+  text-decoration: underline;
 }

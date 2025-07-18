@@ -1,98 +1,127 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { loginUser } from '../../services/api';
 import { useAuthStore2 as useAuthStore } from '../../store/authStore2';
-import { useTestStore } from '../../store/testStore';
 import './Login.css';
 
 const Login: React.FC = () => {
     const [pin, setPin] = useState('');
     const [error, setError] = useState('');
-    const { login, isAuthenticated, token, test } = useAuthStore();
-    const { setValue: setTestValue } = useTestStore();
+    const [loading, setLoading] = useState(false);
+    const [success, setSuccess] = useState('');
+    const { login, isAuthenticated } = useAuthStore();
     const navigate = useNavigate();
 
-    // Monitor auth state changes for debugging
+    // Redirect if already authenticated
     useEffect(() => {
-        console.log('[LOGIN] Auth state changed:', { isAuthenticated, token: token ? `${token.substring(0, 10)}...` : 'null' });
-    }, [isAuthenticated, token]);
+        if (isAuthenticated) {
+            navigate('/create-board');
+        }
+    }, [isAuthenticated, navigate]);
 
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setError('');
-        console.log('--- Login Attempt (Frontend) ---');
-        console.log('PIN entered:', pin);
+        setSuccess('');
+        setLoading(true);
 
         try {
-            console.log('Sending login request to backend...');
-            
-            // Use the standardized API service
             const data = await loginUser(pin);
-            console.log('Response data:', data);
             
-            // Login successful
-            console.log('Login successful on frontend with token:', data.token);
+            // Show success message briefly
+            setSuccess('Login successful! Redirecting...');
             
-            // First test a simple store to see if Zustand works at all
-            console.log('[LOGIN] Testing simple test store...');
-            try {
-                setTestValue('test-value');
-                console.log('[LOGIN] Simple test store worked');
-            } catch (simpleTestError) {
-                console.error('[LOGIN] Error with simple test store:', simpleTestError);
-            }
+            // Update auth state
+            login(data.token);
             
-            // Test the auth store with a simple function
-            console.log('[LOGIN] Testing auth store with test function...');
-            try {
-                test();
-                console.log('[LOGIN] Auth test function completed successfully');
-            } catch (testError) {
-                console.error('[LOGIN] Error calling auth test function:', testError);
-            }
+            // Navigate after a brief delay to show success message
+            setTimeout(() => {
+                navigate('/create-board');
+            }, 1000);
             
-            // The login function will set the cookie
-            console.log('[LOGIN] About to call login function with token:', data.token);
-            console.log('[LOGIN] Login function reference:', typeof login);
-            
-            try {
-                login(data.token); // Update the auth state with token
-                console.log('[LOGIN] Login function completed successfully');
-            } catch (loginError) {
-                console.error('[LOGIN] Error calling login function:', loginError);
-                throw loginError;
-            }
-            
-            // Check state immediately after login call
-            const stateAfterLogin = { isAuthenticated, token };
-            console.log('[LOGIN] State immediately after login call:', stateAfterLogin);
-            
-            // The useEffect above will log the state changes
-            console.log('[LOGIN] Navigating to /create-board');
-            navigate('/create-board');
         } catch (err: any) {
-            console.error('--- CRITICAL ERROR during frontend login ---', err);
-            console.error('Error object:', err);
-            
-            // With fetch, we handle errors differently
-            setError(err.message || 'Unknown error occurred');
+            setError(err.message || 'Invalid PIN. Please try again.');
+        } finally {
+            setLoading(false);
         }
+    };
+
+    const handlePinChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value.replace(/\D/g, '').slice(0, 4); // Only digits, max 4
+        setPin(value);
+        setError(''); // Clear error when user starts typing
     };
 
     return (
         <div className="login-container">
-            <form className="login-form" onSubmit={handleLogin}>
-                <h2>Admin Login</h2>
-                <input
-                    type="password"
-                    value={pin}
-                    onChange={(e) => setPin(e.target.value)}
-                    placeholder="Enter PIN"
-                    className="login-input"
-                />
-                <button type="submit" className="login-button">Login</button>
-                {error && <p className="login-error">{error}</p>}
-            </form>
+            <div className="login-card">
+                <div className="login-logo">
+                    <div className="login-logo-icon">🔬</div>
+                    <h1 className="login-title">Kalibran</h1>
+                    <p className="login-subtitle">Calibration Lab Management System</p>
+                </div>
+
+                <div className="role-indicator">
+                    <span className="role-icon">👤</span>
+                    Admin Access Required
+                </div>
+
+                <form onSubmit={handleLogin}>
+                    <div className="pin-input-container">
+                        <label htmlFor="pin" className="pin-input-label">
+                            Enter 4-Digit PIN
+                        </label>
+                        <input
+                            id="pin"
+                            type="password"
+                            value={pin}
+                            onChange={handlePinChange}
+                            placeholder="••••"
+                            className="pin-input"
+                            maxLength={4}
+                            disabled={loading}
+                            autoComplete="current-password"
+                            autoFocus
+                        />
+                    </div>
+
+                    {error && (
+                        <div className="login-error">
+                            {error}
+                        </div>
+                    )}
+
+                    {success && (
+                        <div className="login-success">
+                            {success}
+                        </div>
+                    )}
+
+                    <button 
+                        type="submit" 
+                        className="login-button"
+                        disabled={loading || pin.length !== 4}
+                    >
+                        {loading ? (
+                            <div className="login-loading">
+                                <div className="login-spinner"></div>
+                                Authenticating...
+                            </div>
+                        ) : (
+                            'Access Admin Panel'
+                        )}
+                    </button>
+                </form>
+
+                <div className="login-footer">
+                    <p className="login-footer-text">
+                        Lab technicians can access boards directly without login.
+                    </p>
+                    <Link to="/create-board" className="login-footer-link">
+                        Continue as Lab Tech →
+                    </Link>
+                </div>
+            </div>
         </div>
     );
 };

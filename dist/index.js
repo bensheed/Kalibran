@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -51,15 +42,17 @@ app.use((0, cors_1.default)({
 app.use(require('cookie-parser')());
 app.use(express_1.default.json());
 // Serve static files from the React app
-app.use(express_1.default.static(path_1.default.join(__dirname, '../src/frontend/build')));
+const staticPath = path_1.default.join(__dirname, '../src/frontend/build');
+console.log('Static files path:', staticPath);
+app.use(express_1.default.static(staticPath));
 // Setup check middleware
-const checkSetup = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const checkSetup = async (req, res, next) => {
     // Exclude setup routes from this check
     if (req.path.startsWith('/setup')) {
         return next();
     }
     try {
-        const result = yield database_service_1.default.query("SELECT setting_value FROM settings WHERE setting_key = 'setup_complete'");
+        const result = await database_service_1.default.query("SELECT setting_value FROM settings WHERE setting_key = 'setup_complete'");
         if (result.rows.length === 0 || result.rows[0].setting_value !== 'true') {
             // The application is not set up.
             res.status(409).json({
@@ -82,7 +75,7 @@ const checkSetup = (req, res, next) => __awaiter(void 0, void 0, void 0, functio
         console.error('Error checking setup status:', error);
         res.status(500).json({ message: 'Internal Server Error' });
     }
-});
+};
 // Apply the setup check to all API routes
 app.use('/api', checkSetup);
 // Routes

@@ -1,0 +1,432 @@
+/* Board Container */
+.board-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background-color: var(--kalibran-off-white);
+  overflow: hidden;
+}
+
+/* Board Header */
+.board-header {
+  background-color: var(--kalibran-white);
+  border-bottom: 2px solid var(--kalibran-border);
+  padding: 16px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 4px var(--kalibran-shadow);
+  z-index: 100;
+}
+
+.board-title-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.board-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--kalibran-dark-grey);
+  margin: 0;
+}
+
+.board-subtitle {
+  font-size: 14px;
+  color: var(--kalibran-medium-grey);
+  margin: 0;
+}
+
+.board-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Board Tabs */
+.board-tabs {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-right: 24px;
+}
+
+.board-tab {
+  padding: 8px 16px;
+  background-color: transparent;
+  color: var(--kalibran-medium-grey);
+  border: 1px solid transparent;
+  border-radius: 6px 6px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.board-tab:hover {
+  background-color: var(--kalibran-light-grey);
+  color: var(--kalibran-dark-grey);
+  transform: none;
+  box-shadow: none;
+}
+
+.board-tab.active {
+  background-color: var(--kalibran-white);
+  color: var(--kalibran-dark-grey);
+  border-color: var(--kalibran-border);
+  border-bottom-color: var(--kalibran-white);
+}
+
+/* Scale Controls */
+.scale-controls {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: var(--kalibran-light-grey);
+  padding: 4px;
+  border-radius: 6px;
+  border: 1px solid var(--kalibran-border);
+}
+
+.scale-button {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--kalibran-white);
+  color: var(--kalibran-medium-grey);
+  border: 1px solid var(--kalibran-border);
+  border-radius: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.scale-button:hover {
+  background-color: var(--kalibran-blue);
+  color: white;
+  border-color: var(--kalibran-blue);
+  transform: none;
+  box-shadow: none;
+}
+
+.scale-display {
+  font-size: 12px;
+  color: var(--kalibran-medium-grey);
+  font-weight: 500;
+  min-width: 40px;
+  text-align: center;
+}
+
+/* Board Content */
+.board-content {
+  flex: 1;
+  overflow: hidden;
+  position: relative;
+}
+
+.board-viewport {
+  height: 100%;
+  overflow: auto;
+  padding: 24px;
+  transform-origin: top left;
+  transition: transform 0.3s ease;
+}
+
+/* Columns Container */
+.columns-container {
+  display: flex;
+  gap: 20px;
+  min-height: calc(100vh - 120px);
+  align-items: flex-start;
+}
+
+/* Column Styles */
+.kanban-column {
+  background-color: var(--kalibran-white);
+  border-radius: 8px;
+  box-shadow: 0 2px 8px var(--kalibran-shadow);
+  min-width: 300px;
+  max-width: 350px;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 160px);
+}
+
+.column-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--kalibran-border);
+  background-color: var(--kalibran-light-grey);
+  border-radius: 8px 8px 0 0;
+}
+
+.column-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--kalibran-dark-grey);
+  margin: 0 0 4px 0;
+}
+
+.column-count {
+  font-size: 12px;
+  color: var(--kalibran-medium-grey);
+  font-weight: 500;
+}
+
+.column-content {
+  flex: 1;
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+/* Custom scrollbar for columns */
+.column-content::-webkit-scrollbar {
+  width: 6px;
+}
+
+.column-content::-webkit-scrollbar-track {
+  background: var(--kalibran-light-grey);
+  border-radius: 3px;
+}
+
+.column-content::-webkit-scrollbar-thumb {
+  background: var(--kalibran-medium-grey);
+  border-radius: 3px;
+}
+
+.column-content::-webkit-scrollbar-thumb:hover {
+  background: var(--kalibran-dark-grey);
+}
+
+/* Card Styles */
+.kanban-card {
+  background-color: var(--kalibran-white);
+  border: 1px solid var(--kalibran-border);
+  border-radius: 6px;
+  padding: 12px;
+  cursor: grab;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 3px var(--kalibran-shadow);
+}
+
+.kanban-card:hover {
+  box-shadow: 0 4px 12px var(--kalibran-shadow-hover);
+  transform: translateY(-1px);
+  border-color: var(--kalibran-blue);
+}
+
+.kanban-card:active {
+  cursor: grabbing;
+}
+
+.card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.card-id {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--kalibran-blue);
+  background-color: rgba(49, 76, 159, 0.1);
+  padding: 2px 6px;
+  border-radius: 3px;
+}
+
+.card-priority {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 2px 6px;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
+.card-priority.high {
+  background-color: #fee2e2;
+  color: #dc2626;
+}
+
+.card-priority.medium {
+  background-color: #fef3c7;
+  color: #d97706;
+}
+
+.card-priority.low {
+  background-color: #dcfce7;
+  color: #16a34a;
+}
+
+.card-title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--kalibran-dark-grey);
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+
+.card-details {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.card-detail {
+  font-size: 12px;
+  color: var(--kalibran-medium-grey);
+  display: flex;
+  justify-content: space-between;
+}
+
+.card-detail-label {
+  font-weight: 500;
+}
+
+.card-detail-value {
+  color: var(--kalibran-dark-grey);
+}
+
+/* Empty State */
+.empty-column {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 20px;
+  color: var(--kalibran-medium-grey);
+  text-align: center;
+}
+
+.empty-column-icon {
+  font-size: 48px;
+  margin-bottom: 12px;
+  opacity: 0.5;
+}
+
+.empty-column-text {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.empty-board {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  color: var(--kalibran-medium-grey);
+  text-align: center;
+}
+
+.empty-board-icon {
+  font-size: 64px;
+  margin-bottom: 16px;
+  opacity: 0.3;
+}
+
+.empty-board-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.empty-board-text {
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+/* Loading States */
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  font-size: 16px;
+  color: var(--kalibran-medium-grey);
+}
+
+.spinner {
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--kalibran-border);
+  border-top: 3px solid var(--kalibran-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 12px;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Responsive Design */
+@media (max-width: 1200px) {
+  .kanban-column {
+    min-width: 280px;
+    max-width: 320px;
+  }
+}
+
+@media (max-width: 768px) {
+  .board-header {
+    padding: 12px 16px;
+    flex-direction: column;
+    gap: 12px;
+    align-items: stretch;
+  }
+  
+  .board-title-section {
+    justify-content: center;
+  }
+  
+  .board-controls {
+    justify-content: center;
+  }
+  
+  .columns-container {
+    gap: 16px;
+    padding: 16px;
+  }
+  
+  .kanban-column {
+    min-width: 260px;
+    max-width: 300px;
+  }
+}
+
+/* Drag and Drop States */
+.column-drag-over {
+  background-color: rgba(49, 76, 159, 0.05);
+  border: 2px dashed var(--kalibran-blue);
+}
+
+.card-dragging {
+  opacity: 0.5;
+  transform: rotate(5deg);
+}
+
+/* Accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus states for keyboard navigation */
+.kanban-card:focus,
+.scale-button:focus,
+.board-tab:focus {
+  outline: 2px solid var(--kalibran-blue);
+  outline-offset: 2px;
+}

@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -18,7 +9,7 @@ const bcrypt_1 = __importDefault(require("bcrypt"));
 const mssql_1 = __importDefault(require("mssql"));
 const fs_1 = __importDefault(require("fs"));
 const path_1 = __importDefault(require("path"));
-const setup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const setup = async (req, res) => {
     console.log('Received setup request:', req.body);
     const { adminPin, dbType, dbHost, dbPort, dbUser, dbPassword, dbName } = req.body;
     // Basic validation
@@ -45,32 +36,32 @@ const setup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         // 1. Test External DB Connection
         console.log('Connecting to external database to test connection...');
         const sqlPool = new mssql_1.default.ConnectionPool(dbConfig);
-        const sqlConnection = yield sqlPool.connect();
+        const sqlConnection = await sqlPool.connect();
         console.log('External database connection successful.');
         sqlConnection.close();
         // 2. Connect to Internal DB and Save Settings
-        const client = yield database_service_1.default.connect();
+        const client = await database_service_1.default.connect();
         try {
             console.log('Connecting to internal database to save settings...');
             const initSql = fs_1.default.readFileSync(path_1.default.join(__dirname, '../../database/init.sql'), 'utf8');
-            yield client.query(initSql);
+            await client.query(initSql);
             console.log('Internal database initialization script executed successfully.');
-            yield client.query('BEGIN');
+            await client.query('BEGIN');
             // Clear any previous, incomplete setup data
-            yield client.query('DELETE FROM settings');
-            const salt = yield bcrypt_1.default.genSalt(10);
-            const hashedPin = yield bcrypt_1.default.hash(adminPin, salt);
-            yield client.query("INSERT INTO settings (setting_key, setting_value) VALUES ($1, $2)", ['admin_pin', hashedPin]);
-            yield client.query("INSERT INTO settings (setting_key, setting_value) VALUES ($1, $2)", ['external_db_type', dbType]);
-            yield client.query("INSERT INTO settings (setting_key, setting_value) VALUES ($1, $2)", ['external_db_config', JSON.stringify(dbConfig)]);
-            yield client.query("INSERT INTO settings (setting_key, setting_value) VALUES ($1, $2)", ['setup_complete', 'true']);
-            yield client.query('COMMIT');
+            await client.query('DELETE FROM settings');
+            const salt = await bcrypt_1.default.genSalt(10);
+            const hashedPin = await bcrypt_1.default.hash(adminPin, salt);
+            await client.query("INSERT INTO settings (setting_key, setting_value) VALUES ($1, $2)", ['admin_pin', hashedPin]);
+            await client.query("INSERT INTO settings (setting_key, setting_value) VALUES ($1, $2)", ['external_db_type', dbType]);
+            await client.query("INSERT INTO settings (setting_key, setting_value) VALUES ($1, $2)", ['external_db_config', JSON.stringify(dbConfig)]);
+            await client.query("INSERT INTO settings (setting_key, setting_value) VALUES ($1, $2)", ['setup_complete', 'true']);
+            await client.query('COMMIT');
             console.log('Configuration saved and setup complete.');
             res.status(201).json({ message: 'Setup completed successfully.' });
         }
         catch (error) {
             console.error('Setup failed during internal database operation:', error);
-            yield client.query('ROLLBACK');
+            await client.query('ROLLBACK');
             throw error; // Re-throw to be caught by the outer catch block
         }
         finally {
@@ -92,22 +83,22 @@ const setup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
         }
         return res.status(500).json({ message: error.message || 'An unexpected error occurred during setup.' });
     }
-});
+};
 exports.setup = setup;
-const resetSetup = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
+const resetSetup = async (req, res) => {
     console.log('Received request to reset setup');
     try {
-        const client = yield database_service_1.default.connect();
+        const client = await database_service_1.default.connect();
         try {
-            yield client.query('BEGIN');
+            await client.query('BEGIN');
             // This will delete all settings, effectively resetting the application
-            yield client.query('DELETE FROM settings');
+            await client.query('DELETE FROM settings');
             console.log('All settings have been deleted.');
-            yield client.query('COMMIT');
+            await client.query('COMMIT');
             res.status(200).json({ message: 'Setup has been reset successfully.' });
         }
         catch (error) {
-            yield client.query('ROLLBACK');
+            await client.query('ROLLBACK');
             throw error;
         }
         finally {
@@ -120,5 +111,5 @@ const resetSetup = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
         console.error('Failed to reset setup:', error);
         res.status(500).json({ message: 'An internal server error occurred during reset.' });
     }
-});
+};
 exports.resetSetup = resetSetup;

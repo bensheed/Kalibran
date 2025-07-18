@@ -1,13 +1,4 @@
 "use strict";
-var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
-    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
-    return new (P || (P = Promise))(function (resolve, reject) {
-        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
-        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
-        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
-        step((generator = generator.apply(thisArg, _arguments || [])).next());
-    });
-};
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
@@ -15,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.isAdmin = exports.authenticate = void 0;
 const database_service_1 = __importDefault(require("../services/database.service"));
 const session_service_1 = require("../services/session.service");
-const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, function* () {
+const authenticate = async (req, res, next) => {
     const { pin } = req.body;
     console.log('--- Authentication Attempt ---');
     console.log('Received PIN:', pin ? 'Exists' : 'Missing');
@@ -26,7 +17,7 @@ const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
     }
     try {
         console.log('Fetching admin_pin from database...');
-        const result = yield database_service_1.default.query("SELECT setting_value FROM settings WHERE setting_key = 'admin_pin'");
+        const result = await database_service_1.default.query("SELECT setting_value FROM settings WHERE setting_key = 'admin_pin'");
         if (result.rows.length === 0) {
             console.log('Authentication failed: No admin_pin found in the database.');
             return res.status(401).json({ message: 'Invalid credentials.' });
@@ -62,12 +53,12 @@ const authenticate = (req, res, next) => __awaiter(void 0, void 0, void 0, funct
         console.error('--- CRITICAL ERROR during authentication ---', error);
         next(error);
     }
-});
+};
 exports.authenticate = authenticate;
 const isAdmin = (req, res, next) => {
     const authHeader = req.headers.authorization;
     console.log('Auth middleware - Authorization header:', authHeader ? `${authHeader.substring(0, 15)}...` : 'Missing');
-    const token = authHeader === null || authHeader === void 0 ? void 0 : authHeader.split(' ')[1];
+    const token = authHeader?.split(' ')[1];
     console.log('Auth middleware - Checking token:', token ? `${token.substring(0, 10)}...` : 'No token');
     if (!token) {
         console.log('Auth middleware - No token provided in request');

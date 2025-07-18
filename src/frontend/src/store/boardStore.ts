@@ -29,9 +29,10 @@ export const useBoardStore = create<BoardState>((set) => ({
     fetchBoards: async () => {
         set({ loading: true, error: null });
         try {
-            const response = await api.get('/boards');
+            const response = await api.get('/api/boards');
             set({ boards: response.data, loading: false });
         } catch (error) {
+            console.error('Failed to fetch boards:', error);
             set({ error: 'Failed to fetch boards', loading: false });
         }
     },
@@ -39,8 +40,8 @@ export const useBoardStore = create<BoardState>((set) => ({
         console.log('[BOARD_STORE] Fetching board with ID:', id);
         set({ loading: true, error: null });
         try {
-            console.log('[BOARD_STORE] Making API request to /boards/' + id);
-            const response = await api.get(`/boards/${id}`);
+            console.log('[BOARD_STORE] Making API request to /api/boards/' + id);
+            const response = await api.get(`/api/boards/${id}`);
             console.log('[BOARD_STORE] API response received:', response.data);
             set({
                 selectedBoard: response.data,
@@ -58,7 +59,7 @@ export const useBoardStore = create<BoardState>((set) => ({
     },
     moveCard: async (job_no: string, new_column_id: number, inst_id: number) => {
         try {
-            await api.put(`/cards/${job_no}/move`, { new_column_id, inst_id });
+            await api.put(`/api/cards/${job_no}/move`, { new_column_id, inst_id });
             // After moving the card, we need to refetch the board data to get the updated state
             set((state) => {
                 if (state.selectedBoard) {
@@ -73,7 +74,7 @@ export const useBoardStore = create<BoardState>((set) => ({
     fetchSettings: async () => {
         set({ loading: true, error: null });
         try {
-            const response = await api.get('/settings');
+            const response = await api.get('/api/settings');
             set({ settings: response.data, loading: false });
         } catch (error) {
             set({ error: 'Failed to fetch settings', loading: false });
