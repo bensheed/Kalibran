@@ -42,7 +42,7 @@ app.use(require('cookie-parser')());
 app.use(express.json());
 
 // Serve static files from the React app
-const staticPath = path.join(__dirname, '../src/frontend/build');
+const staticPath = path.join(__dirname, '../frontend/build');
 console.log('Static files path:', staticPath);
 app.use(express.static(staticPath));
 

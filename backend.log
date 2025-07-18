@@ -40,3 +40,4 @@ Creating new board - Request body: { name: 'Test Authentication Fix' }
 Auth headers: Bearer sess_1752804491232_0.7531166057315319
 Creating board with name: Test Authentication Fix
 Board created successfully: { id: 7, name: 'Test Authentication Fix', card_layout_config: {} }
+Error: ENOENT: no such file or directory, stat '/workspace/Kalibran/src/frontend/build/index.html'

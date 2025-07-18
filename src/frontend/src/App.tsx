@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'r
 import { useAuthStore2 as useAuthStore } from './store/authStore2';
 import Login from './components/Login/Login';
 import CreateBoard from './components/CreateBoard/CreateBoard';
+import Setup from './components/Setup/Setup';
 
 // Debug component to show current route and auth state
 const RouteDebugger: React.FC = () => {
@@ -57,6 +58,7 @@ function AppContent() {
     <>
       <RouteDebugger />
       <Routes>
+        <Route path="/setup" element={<Setup />} />
         <Route path="/login" element={<Login />} />
         <Route path="/create-board" element={
           <ProtectedRoute>
