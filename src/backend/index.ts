@@ -42,7 +42,10 @@ app.use(require('cookie-parser')());
 app.use(express.json());
 
 // Serve static files from the React app
-const staticPath = path.join(__dirname, '../src/frontend/build');
+// Use absolute path for Docker compatibility
+const staticPath = process.env.NODE_ENV === 'production' 
+    ? '/app/src/frontend/build'
+    : path.join(__dirname, '../../src/frontend/build');
 console.log('Static files path:', staticPath);
 app.use(express.static(staticPath));
 
