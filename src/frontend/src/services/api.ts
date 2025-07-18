@@ -1,5 +1,20 @@
 import axios from 'axios';
-import { useAuthStore2 as useAuthStore } from '../store/authStore2';
+
+// Helper functions to get token without circular import
+const getTokenFromCookie = (): string | null => {
+    const cookies = document.cookie.split(';');
+    for (const cookie of cookies) {
+        const [name, value] = cookie.trim().split('=');
+        if (name === 'token') {
+            return value;
+        }
+    }
+    return null;
+};
+
+const getTokenFromStorage = (): string | null => {
+    return localStorage.getItem('token');
+};
 
 // DIRECT FIX: Create axios instance with correct baseURL
 const api = axios.create({
@@ -20,20 +35,10 @@ api.interceptors.request.use(
         console.log('[API] Request interceptor - baseURL:', config.baseURL);
         console.log('[API] Request interceptor - full URL will be:', config.baseURL + config.url);
         
-        // Get token from auth store first (most reliable)
-        const { token } = useAuthStore.getState();
-        
-        // If not in store, try to get from cookie as fallback
-        let authToken = token;
+        // Get token from storage first, then cookie as fallback
+        let authToken = getTokenFromStorage();
         if (!authToken) {
-            const cookies = document.cookie.split(';');
-            for (const cookie of cookies) {
-                const [name, value] = cookie.trim().split('=');
-                if (name === 'session_id') {
-                    authToken = value;
-                    break;
-                }
-            }
+            authToken = getTokenFromCookie();
         }
 
         // Add token to headers if it exists
