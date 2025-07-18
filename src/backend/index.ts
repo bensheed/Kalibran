@@ -57,7 +57,14 @@ app.use((req, res, next) => {
     next();
 });
 
-app.use(express.static(staticPath));
+// Configure static file serving with correct MIME types
+app.use(express.static(staticPath, {
+    setHeaders: (res, path) => {
+        if (path.endsWith('.js')) {
+            res.setHeader('Content-Type', 'application/javascript');
+        }
+    }
+}));
 
 // Setup check middleware
 const checkSetup: express.RequestHandler = async (req, res, next) => {
