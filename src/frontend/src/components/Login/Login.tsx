@@ -1,22 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-// Try direct import first
-import { loginUser as directLoginUser } from '../../services/api';
-import * as api from '../../services/api';
-
-console.log('[LOGIN] direct import loginUser:', directLoginUser);
-console.log('[LOGIN] typeof direct loginUser:', typeof directLoginUser);
-console.log('[LOGIN] api import result:', api);
-console.log('[LOGIN] api.loginUser:', api.loginUser);
-console.log('[LOGIN] typeof api.loginUser:', typeof api.loginUser);
-
-const { loginUser } = api;
-
-console.log('[LOGIN] destructured loginUser:', loginUser);
-console.log('[LOGIN] typeof loginUser:', typeof loginUser);
-
+import { loginUser } from '../../services/api';
 import { useAuthStore2 as useAuthStore } from '../../store/authStore2';
 import './Login.css';
+
+console.log('[LOGIN] loginUser imported:', loginUser);
+console.log('[LOGIN] typeof loginUser:', typeof loginUser);
 
 const Login: React.FC = () => {
     const [pin, setPin] = useState('');
@@ -49,20 +38,14 @@ const Login: React.FC = () => {
             console.log('PIN entered:', pin);
             
             console.log('Sending login request to backend...');
-            console.log('[LOGIN] About to call loginUser, available options:');
-            console.log('[LOGIN] directLoginUser:', directLoginUser);
-            console.log('[LOGIN] loginUser:', loginUser);
-            console.log('[LOGIN] api.loginUser:', api.loginUser);
+            console.log('[LOGIN] About to call loginUser:', loginUser);
+            console.log('[LOGIN] typeof loginUser:', typeof loginUser);
             
-            // Try direct import first
-            const loginFunction = directLoginUser || loginUser || api.loginUser;
-            console.log('[LOGIN] Using login function:', loginFunction);
-            
-            if (!loginFunction) {
-                throw new Error('loginUser function not available');
+            if (!loginUser || typeof loginUser !== 'function') {
+                throw new Error('loginUser function not available or not a function');
             }
             
-            const data = await loginFunction(pin);
+            const data = await loginUser(pin);
             
             console.log('Response status: 200');
             console.log('Response data:', data);

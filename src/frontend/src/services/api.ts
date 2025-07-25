@@ -61,14 +61,19 @@ api.interceptors.request.use(
 
 console.log('[API] Defining loginUser function...');
 
-// API functions
-export const loginUser = async (pin: string) => {
+// API functions - Define as function declaration first, then export
+async function loginUserImpl(pin: string) {
     console.log('[API] loginUser called with pin:', pin);
     const response = await api.post('/api/login', { pin });
     return response.data;
-};
+}
+
+// Export the function
+export const loginUser = loginUserImpl;
 
 console.log('[API] loginUser function defined');
+console.log('[API] loginUser type:', typeof loginUser);
+console.log('[API] loginUser function:', loginUser);
 
 // Ensure loginUser is available for debugging
 if (typeof window !== 'undefined') {
@@ -83,4 +88,9 @@ export const createBoard = async (name: string) => {
     return response.data;
 };
 
-export default api;
+// Export all functions as a default object as well for compatibility
+export default {
+    loginUser,
+    createBoard,
+    api
+};
