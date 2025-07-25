@@ -1,29 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-
-console.log('[LOGIN] ===== ABOUT TO IMPORT API MODULE =====');
-console.log('[LOGIN] Import timestamp:', new Date().toISOString());
-
 import { loginUser } from '../../services/api';
 import * as apiModule from '../../services/api';
 import apiDefault from '../../services/api';
-
-console.log('[LOGIN] ===== API MODULE IMPORTED =====');
-console.log('[LOGIN] Named import loginUser:', loginUser);
-console.log('[LOGIN] Namespace import apiModule:', apiModule);
-console.log('[LOGIN] Default import apiDefault:', apiDefault);
-console.log('[LOGIN] apiModule.loginUser:', apiModule.loginUser);
-console.log('[LOGIN] apiDefault.loginUser:', apiDefault?.loginUser);
-
 import { useAuthStore2 as useAuthStore } from '../../store/authStore2';
 import './Login.css';
 
 console.log('[LOGIN] ===== LOGIN COMPONENT LOADING =====');
 console.log('[LOGIN] Component loaded at:', new Date().toISOString());
-console.log('[LOGIN] loginUser imported:', loginUser);
+console.log('[LOGIN] Named import loginUser:', loginUser);
 console.log('[LOGIN] typeof loginUser:', typeof loginUser);
-console.log('[LOGIN] loginUser.name:', loginUser?.name);
-console.log('[LOGIN] loginUser instanceof Function:', loginUser instanceof Function);
+console.log('[LOGIN] Namespace import apiModule:', apiModule);
+console.log('[LOGIN] Default import apiDefault:', apiDefault);
+console.log('[LOGIN] apiModule.loginUser:', apiModule.loginUser);
+console.log('[LOGIN] apiDefault.loginUser:', apiDefault?.loginUser);
 
 // Test import immediately
 try {
