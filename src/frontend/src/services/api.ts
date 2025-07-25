@@ -1,68 +1,57 @@
-import axios from 'axios';
+console.log('[API] Starting api.ts file...');
 
-console.log('[API] Loading api.ts file...');
-console.log('[API] axios imported successfully:', typeof axios);
+// Simple approach - just use fetch instead of axios to avoid import issues
+console.log('[API] Using fetch API instead of axios');
 
-// Helper functions to get token without circular import
-const getTokenFromCookie = (): string | null => {
-    const cookies = document.cookie.split(';');
-    for (const cookie of cookies) {
-        const [name, value] = cookie.trim().split('=');
-        if (name === 'token') {
-            return value;
-        }
-    }
-    return null;
-};
-
-const getTokenFromStorage = (): string | null => {
-    return localStorage.getItem('token');
-};
-
-// Create axios instance with correct baseURL
-const api = axios.create({
-    baseURL: 'http://localhost:3001',
-    withCredentials: true,
-});
-
-console.log('[API] Axios instance created');
-
-// Add request interceptor for adding auth token
-api.interceptors.request.use(
-    config => {
-        config.baseURL = 'http://localhost:3001';
-        
-        // Get token from storage first, then cookie as fallback
-        let authToken = getTokenFromStorage();
-        if (!authToken) {
-            authToken = getTokenFromCookie();
-        }
-
-        // Add token to headers if it exists
-        if (authToken && config.headers) {
-            config.headers.Authorization = `Bearer ${authToken}`;
-        }
-
-        return config;
-    },
-    error => {
-        return Promise.reject(error);
-    }
-);
-
-// API functions - Use function declaration for better hoisting and bundling compatibility
+// Simple loginUser function without axios for now
 export async function loginUser(pin: string) {
     console.log('[API] loginUser called with pin:', pin);
-    const response = await api.post('/api/login', { pin });
-    return response.data;
+    
+    // Use fetch instead of axios for now
+    try {
+        const response = await fetch('http://localhost:3001/api/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: 'include',
+            body: JSON.stringify({ pin })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('[API] Error in loginUser:', error);
+        throw error;
+    }
 }
 
 console.log('[API] loginUser function defined and exported');
 console.log('[API] typeof loginUser:', typeof loginUser);
 
 export const createBoard = async (name: string) => {
-    const response = await api.post('/api/boards', { name });
-    return response.data;
+    const response = await fetch('http://localhost:3001/api/boards', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ name })
+    });
+    
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    
+    return response.json();
 };
 
-export default api;
+// Export a simple object as default
+export default {
+    loginUser,
+    createBoard
+};
