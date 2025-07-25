@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 console.log('[API] Loading api.ts file...');
+console.log('[API] axios imported successfully:', typeof axios);
 
 // Helper functions to get token without circular import
 const getTokenFromCookie = (): string | null => {
@@ -55,6 +56,9 @@ export async function loginUser(pin: string) {
     const response = await api.post('/api/login', { pin });
     return response.data;
 }
+
+console.log('[API] loginUser function defined and exported');
+console.log('[API] typeof loginUser:', typeof loginUser);
 
 export const createBoard = async (name: string) => {
     const response = await api.post('/api/boards', { name });

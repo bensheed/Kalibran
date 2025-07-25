@@ -4,7 +4,9 @@ import { loginUser } from '../../services/api';
 import { useAuthStore2 as useAuthStore } from '../../store/authStore2';
 import './Login.css';
 
-console.log('[LOGIN] Component loaded, loginUser type:', typeof loginUser);
+console.log('[LOGIN] All imports completed');
+console.log('[LOGIN] loginUser type:', typeof loginUser);
+console.log('[LOGIN] loginUser value:', loginUser);
 
 const Login: React.FC = () => {
     const [pin, setPin] = useState('');
