@@ -38,13 +38,15 @@ const api = {
     }
 };
 
-export function loginUser(pin: string) {
+export async function loginUser(pin: string) {
     console.log('[API] loginUser called with pin:', pin);
-    return api.post('/api/login', { pin });
+    const response = await api.post('/api/login', { pin });
+    return response.data; // Return data directly for individual functions
 }
 
 export const createBoard = async (name: string) => {
-    return api.post('/api/boards', { name });
+    const response = await api.post('/api/boards', { name });
+    return response.data; // Return data directly for individual functions
 };
 
 console.log('[API] API functions defined and exported');
