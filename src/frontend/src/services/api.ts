@@ -35,6 +35,24 @@ const api = {
         }
         
         return { data: await response.json() };
+    },
+    
+    async put(url: string, data?: any) {
+        console.log('[API] PUT request to:', url, 'with data:', data);
+        const response = await fetch(`http://localhost:3001${url}`, {
+            method: 'PUT',
+            credentials: 'include',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: data ? JSON.stringify(data) : undefined
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        
+        return { data: await response.json() };
     }
 };
 
