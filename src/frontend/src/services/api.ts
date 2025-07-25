@@ -16,7 +16,11 @@ const api = {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        return { data: await response.json() };
+        return { 
+            data: await response.json(),
+            status: response.status,
+            statusText: response.statusText
+        };
     },
     
     async post(url: string, data?: any) {
@@ -34,7 +38,11 @@ const api = {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        return { data: await response.json() };
+        return { 
+            data: await response.json(),
+            status: response.status,
+            statusText: response.statusText
+        };
     },
     
     async put(url: string, data?: any) {
@@ -52,7 +60,11 @@ const api = {
             throw new Error(`HTTP error! status: ${response.status}`);
         }
         
-        return { data: await response.json() };
+        return { 
+            data: await response.json(),
+            status: response.status,
+            statusText: response.statusText
+        };
     }
 };
 
