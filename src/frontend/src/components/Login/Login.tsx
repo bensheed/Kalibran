@@ -1,11 +1,42 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+
+console.log('[LOGIN] ===== ABOUT TO IMPORT API MODULE =====');
+console.log('[LOGIN] Import timestamp:', new Date().toISOString());
+
 import { loginUser } from '../../services/api';
+import * as apiModule from '../../services/api';
+import apiDefault from '../../services/api';
+
+console.log('[LOGIN] ===== API MODULE IMPORTED =====');
+console.log('[LOGIN] Named import loginUser:', loginUser);
+console.log('[LOGIN] Namespace import apiModule:', apiModule);
+console.log('[LOGIN] Default import apiDefault:', apiDefault);
+console.log('[LOGIN] apiModule.loginUser:', apiModule.loginUser);
+console.log('[LOGIN] apiDefault.loginUser:', apiDefault?.loginUser);
+
 import { useAuthStore2 as useAuthStore } from '../../store/authStore2';
 import './Login.css';
 
+console.log('[LOGIN] ===== LOGIN COMPONENT LOADING =====');
+console.log('[LOGIN] Component loaded at:', new Date().toISOString());
 console.log('[LOGIN] loginUser imported:', loginUser);
 console.log('[LOGIN] typeof loginUser:', typeof loginUser);
+console.log('[LOGIN] loginUser.name:', loginUser?.name);
+console.log('[LOGIN] loginUser instanceof Function:', loginUser instanceof Function);
+
+// Test import immediately
+try {
+    console.log('[LOGIN] Testing loginUser is callable...');
+    if (typeof loginUser === 'function') {
+        console.log('[LOGIN] ✓ loginUser is a function');
+    } else {
+        console.error('[LOGIN] ✗ loginUser is NOT a function, it is:', typeof loginUser);
+        console.error('[LOGIN] loginUser value:', loginUser);
+    }
+} catch (e) {
+    console.error('[LOGIN] Error testing loginUser:', e);
+}
 
 const Login: React.FC = () => {
     const [pin, setPin] = useState('');
@@ -34,18 +65,59 @@ const Login: React.FC = () => {
         setLoading(true);
 
         try {
-            console.log('--- Login Attempt (Frontend) ---');
-            console.log('PIN entered:', pin);
+            console.log('[LOGIN] ===== LOGIN ATTEMPT STARTED =====');
+            console.log('[LOGIN] PIN entered:', pin);
+            console.log('[LOGIN] Timestamp:', new Date().toISOString());
             
-            console.log('Sending login request to backend...');
-            console.log('[LOGIN] About to call loginUser:', loginUser);
+            console.log('[LOGIN] ===== FUNCTION VALIDATION =====');
+            console.log('[LOGIN] loginUser reference:', loginUser);
             console.log('[LOGIN] typeof loginUser:', typeof loginUser);
+            console.log('[LOGIN] loginUser === undefined:', loginUser === undefined);
+            console.log('[LOGIN] loginUser === null:', loginUser === null);
+            console.log('[LOGIN] loginUser instanceof Function:', loginUser instanceof Function);
             
-            if (!loginUser || typeof loginUser !== 'function') {
-                throw new Error('loginUser function not available or not a function');
+            // Check window object for debugging
+            if (typeof window !== 'undefined') {
+                console.log('[LOGIN] window.loginUser:', (window as any).loginUser);
+                console.log('[LOGIN] window.apiModule:', (window as any).apiModule);
             }
             
-            const data = await loginUser(pin);
+            // Try to find a working loginUser function from multiple sources
+            let workingLoginUser = null;
+            
+            console.log('[LOGIN] ===== TRYING DIFFERENT IMPORT METHODS =====');
+            
+            if (typeof loginUser === 'function') {
+                console.log('[LOGIN] ✓ Named import loginUser works');
+                workingLoginUser = loginUser;
+            } else if (typeof apiModule.loginUser === 'function') {
+                console.log('[LOGIN] ✓ Namespace import apiModule.loginUser works');
+                workingLoginUser = apiModule.loginUser;
+            } else if (typeof apiDefault?.loginUser === 'function') {
+                console.log('[LOGIN] ✓ Default import apiDefault.loginUser works');
+                workingLoginUser = apiDefault.loginUser;
+            } else if (typeof (window as any).loginUser === 'function') {
+                console.log('[LOGIN] ✓ Window.loginUser works');
+                workingLoginUser = (window as any).loginUser;
+            } else if (typeof (window as any).apiModule?.loginUser === 'function') {
+                console.log('[LOGIN] ✓ Window.apiModule.loginUser works');
+                workingLoginUser = (window as any).apiModule.loginUser;
+            }
+            
+            if (!workingLoginUser) {
+                console.error('[LOGIN] ✗ No working loginUser function found');
+                console.error('[LOGIN] loginUser:', loginUser);
+                console.error('[LOGIN] apiModule.loginUser:', apiModule.loginUser);
+                console.error('[LOGIN] apiDefault?.loginUser:', apiDefault?.loginUser);
+                throw new Error('No working loginUser function found from any import method');
+            }
+            
+            console.log('[LOGIN] ✓ Found working loginUser function');
+            console.log('[LOGIN] ===== CALLING LOGINUSER =====');
+            
+            const data = await workingLoginUser(pin);
+            
+            console.log('[LOGIN] ===== LOGINUSER CALL COMPLETED =====');
             
             console.log('Response status: 200');
             console.log('Response data:', data);
