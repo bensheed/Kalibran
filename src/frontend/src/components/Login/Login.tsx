@@ -1,12 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { loginUser } from '../../services/api';
+import * as apiModule from '../../services/api';
+import { testFunction } from '../../services/test-api';
 import { useAuthStore2 as useAuthStore } from '../../store/authStore2';
 import './Login.css';
 
 console.log('[LOGIN] All imports completed');
-console.log('[LOGIN] loginUser type:', typeof loginUser);
-console.log('[LOGIN] loginUser value:', loginUser);
+console.log('[LOGIN] testFunction type:', typeof testFunction);
+console.log('[LOGIN] apiModule:', apiModule);
+console.log('[LOGIN] apiModule.loginUser type:', typeof apiModule.loginUser);
+console.log('[LOGIN] apiModule.loginUser value:', apiModule.loginUser);
+
+// Extract loginUser from the module
+const loginUser = apiModule.loginUser;
 
 const Login: React.FC = () => {
     const [pin, setPin] = useState('');
