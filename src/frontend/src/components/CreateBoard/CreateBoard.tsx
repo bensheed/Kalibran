@@ -58,7 +58,8 @@ const CreateBoard: React.FC = () => {
         }
         
         try {
-            const data = await createBoard(boardName);
+            const response = await createBoard(boardName);
+            const data = response.data;
             
             setSuccess('Board created successfully! Redirecting...');
             
